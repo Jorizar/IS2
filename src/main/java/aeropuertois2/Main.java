@@ -1,10 +1,10 @@
 package aeropuertois2;
 
-import aeropuertois2.personal.presentacion.PersonalMenu;
+import aeropuertois2.inicio.presentacion.InicioMenu;
 
 public class Main {
     public static void main(String[] args) {
-        PersonalMenu personalMenu = new PersonalMenu();
-        personalMenu.iniciar();
+        InicioMenu inicioMenu = new InicioMenu();
+        inicioMenu.iniciar();
     }
 }

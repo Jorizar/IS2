@@ -1,14 +1,10 @@
 package aeropuertois2.personal.presentacion;
 
-import aeropuertois2.comun.config.DatabaseConfig;
-import aeropuertois2.comun.config.DatabaseConnection;
 import aeropuertois2.comun.excepciones.AuthorizationException;
 import aeropuertois2.comun.excepciones.ValidationException;
-import aeropuertois2.personal.aplicaciones.AuthService;
-import aeropuertois2.personal.aplicaciones.EmpleadoService;
+import aeropuertois2.personal.controladores.PersonalController;
 import aeropuertois2.personal.dominio.Empleado;
 import aeropuertois2.personal.dominio.FiltroTipo;
-import aeropuertois2.personal.infraestructura.EmpleadoDao;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -16,13 +12,13 @@ import java.util.Scanner;
 
 public class PersonalMenu {
 
-    public void iniciar() {
-        DatabaseConfig config = DatabaseConfig.load();
-        DatabaseConnection databaseConnection = new DatabaseConnection(config);
-        EmpleadoDao empleadoDao = new EmpleadoDao(databaseConnection);
-        AuthService authService = new AuthService(empleadoDao);
-        EmpleadoService empleadoService = new EmpleadoService(empleadoDao);
+    private final PersonalController personalController;
 
+    public PersonalMenu() {
+        this.personalController = new PersonalController();
+    }
+
+    public void iniciar() {
         try (Scanner scanner = new Scanner(System.in)) {
             ConsolePrinter.printTitulo("Sistema Personal - Login");
 
@@ -32,10 +28,10 @@ public class PersonalMenu {
             System.out.print("Introduzca su contraseña: ");
             String password = scanner.nextLine();
 
-            Empleado empleadoLogueado = authService.login(dni, password);
+            Empleado empleadoLogueado = personalController.login(dni, password);
             System.out.println("Login correcto. Bienvenido/a, " + empleadoLogueado.getNombre());
 
-            lanzarMenu(scanner, empleadoService);
+            lanzarMenu(scanner);
 
         } catch (ValidationException | AuthorizationException e) {
             System.out.println(e.getMessage());
@@ -46,7 +42,7 @@ public class PersonalMenu {
         }
     }
 
-    private void lanzarMenu(Scanner scanner, EmpleadoService empleadoService) throws SQLException {
+    private void lanzarMenu(Scanner scanner) throws SQLException {
         boolean salir = false;
 
         while (!salir) {
@@ -54,37 +50,37 @@ public class PersonalMenu {
             System.out.println("1. Mostrar lista completa de empleados");
             System.out.println("2. Buscar empleado por nombre o DNI");
             System.out.println("3. Filtrar empleados");
-            System.out.println("4. Salir");
+            System.out.println("4. Volver al inicio");
             System.out.print("Seleccione una opción: ");
 
             String opcion = scanner.nextLine();
 
             switch (opcion) {
-                case "1" -> mostrarTodos(empleadoService);
-                case "2" -> buscarEmpleados(scanner, empleadoService);
-                case "3" -> filtrarEmpleados(scanner, empleadoService);
+                case "1" -> mostrarTodos();
+                case "2" -> buscarEmpleados(scanner);
+                case "3" -> filtrarEmpleados(scanner);
                 case "4" -> {
                     salir = true;
-                    System.out.println("Sesión cerrada.");
+                    System.out.println("Volviendo al menú principal...");
                 }
                 default -> System.out.println("Opción no válida.");
             }
         }
     }
 
-    private void mostrarTodos(EmpleadoService empleadoService) throws SQLException {
+    private void mostrarTodos() throws SQLException {
         ConsolePrinter.printTitulo("Lista completa de empleados");
-        List<Empleado> empleados = empleadoService.listarTodos();
+        List<Empleado> empleados = personalController.listarTodos();
         ConsolePrinter.printEmpleados(empleados);
     }
 
-    private void buscarEmpleados(Scanner scanner, EmpleadoService empleadoService) throws SQLException {
+    private void buscarEmpleados(Scanner scanner) throws SQLException {
         ConsolePrinter.printTitulo("Búsqueda de empleados");
         System.out.print("Introduzca nombre o DNI: ");
         String criterio = scanner.nextLine();
 
         try {
-            List<Empleado> empleados = empleadoService.buscarPorNombreODni(criterio);
+            List<Empleado> empleados = personalController.buscarPorNombreODni(criterio);
             ConsolePrinter.printEmpleados(empleados);
         } catch (ValidationException e) {
             System.out.println("Error: " + e.getMessage());
@@ -92,7 +88,7 @@ public class PersonalMenu {
         }
     }
 
-    private void filtrarEmpleados(Scanner scanner, EmpleadoService empleadoService) throws SQLException {
+    private void filtrarEmpleados(Scanner scanner) throws SQLException {
         ConsolePrinter.printTitulo("Filtro de empleados");
         System.out.println("1. Función");
         System.out.println("2. Rol");
@@ -123,7 +119,7 @@ public class PersonalMenu {
         }
 
         try {
-            List<Empleado> empleados = empleadoService.filtrar(tipo, valor);
+            List<Empleado> empleados = personalController.filtrar(tipo, valor);
             ConsolePrinter.printEmpleados(empleados);
         } catch (ValidationException e) {
             System.out.println("Error: " + e.getMessage());
