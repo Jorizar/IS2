@@ -2,13 +2,15 @@ package aeropuertois2.inicio.controladores;
 import aeropuertois2.personal.presentacion.PersonalMenu;
 import aeropuertois2.incidencia.presentacion.IncidenciaMenu;
 
+import java.util.Scanner;
+
 public class InicioController {
 
-    public boolean procesarOpcion(String opcion) {
+    public boolean procesarOpcion(String opcion, Scanner scanner) {
         switch (opcion) {
             case "1" -> {
                 PersonalMenu personalMenu = new PersonalMenu();
-                personalMenu.iniciar();
+                personalMenu.iniciar(scanner);
                 return true;
             }
             case "2" -> {

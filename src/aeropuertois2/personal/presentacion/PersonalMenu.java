@@ -18,8 +18,8 @@ public class PersonalMenu {
         this.personalController = new PersonalController();
     }
 
-    public void iniciar() {
-        try (Scanner scanner = new Scanner(System.in)) {
+    public void iniciar(Scanner scanner) {
+        try {
             ConsolePrinter.printTitulo("Sistema Personal - Login");
 
             System.out.print("Introduzca su DNI: ");
