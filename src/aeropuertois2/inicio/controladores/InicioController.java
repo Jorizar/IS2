@@ -1,6 +1,6 @@
 package aeropuertois2.inicio.controladores;
-
 import aeropuertois2.personal.presentacion.PersonalMenu;
+import aeropuertois2.incidencia.presentacion.IncidenciaMenu;
 
 public class InicioController {
 
@@ -16,7 +16,8 @@ public class InicioController {
                 return true;
             }
             case "3" -> {
-                System.out.println("Módulo Incidencias no implementado todavía.");
+            	IncidenciaMenu incidenciaMenu = new IncidenciaMenu();
+            	incidenciaMenu.iniciar();
                 return true;
             }
             case "4" -> {
