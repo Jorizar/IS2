@@ -17,107 +17,103 @@ import java.util.Optional;
 
 public class EmpleadoDao {
 
-    private final DatabaseConnection databaseConnection;
+	private final DatabaseConnection databaseConnection;
 
-    public EmpleadoDao(DatabaseConnection databaseConnection) {
-        this.databaseConnection = databaseConnection;
-    }
+	public EmpleadoDao(DatabaseConnection databaseConnection) {
+		this.databaseConnection = databaseConnection;
+	}
 
-    public Optional<Empleado> buscarPorId(String id) throws SQLException {
-        String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE id = ?";
+	public Optional<Empleado> buscarPorId(String id) throws SQLException {
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE id = ?";
 
-        try (Connection connection = databaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+		try (Connection connection = databaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, id);
+			statement.setString(1, id);
 
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(mapearEmpleado(rs));
-                }
-            }
-        }
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					return Optional.of(mapearEmpleado(rs));
+				}
+			}
+		}
 
-        return Optional.empty();
-    }
+		return Optional.empty();
+	}
 
-    public List<Empleado> listarTodos() throws SQLException {
-        String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados ORDER BY nombre ASC";
+	public List<Empleado> listarTodos() throws SQLException {
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados ORDER BY nombre ASC";
 
-        try (Connection connection = databaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet rs = statement.executeQuery()) {
+		try (Connection connection = databaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql);
+				ResultSet rs = statement.executeQuery()) {
 
-            return mapearLista(rs);
-        }
-    }
+			return mapearLista(rs);
+		}
+	}
 
-    public List<Empleado> buscarPorDni(String dni) throws SQLException {
-        String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE id = ?";
+	public List<Empleado> buscarPorDni(String dni) throws SQLException {
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE id = ?";
 
-        try (Connection connection = databaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+		try (Connection connection = databaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, dni);
+			statement.setString(1, dni);
 
-            try (ResultSet rs = statement.executeQuery()) {
-                return mapearLista(rs);
-            }
-        }
-    }
+			try (ResultSet rs = statement.executeQuery()) {
+				return mapearLista(rs);
+			}
+		}
+	}
 
-    public List<Empleado> buscarPorNombre(String nombre) throws SQLException {
-        String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE nombre = ? ORDER BY nombre ASC";
+	public List<Empleado> buscarPorNombre(String nombre) throws SQLException {
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE nombre = ? ORDER BY nombre ASC";
 
-        try (Connection connection = databaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+		try (Connection connection = databaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, nombre);
+			statement.setString(1, nombre);
 
-            try (ResultSet rs = statement.executeQuery()) {
-                return mapearLista(rs);
-            }
-        }
-    }
+			try (ResultSet rs = statement.executeQuery()) {
+				return mapearLista(rs);
+			}
+		}
+	}
 
-    public List<Empleado> filtrarPor(FiltroTipo tipo, String valor) throws SQLException {
-        String columna = switch (tipo) {
-            case FUNCION -> "funcion";
-            case ROL -> "rol";
-            case TURNO -> "turno";
-        };
+	public List<Empleado> filtrarPor(FiltroTipo tipo, String valor) throws SQLException {
+		String columna = switch (tipo) {
+		case FUNCION -> "funcion";
+		case ROL -> "rol";
+		case TURNO -> "turno";
+		};
 
-        String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE " + columna + " = ? ORDER BY nombre ASC";
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE " + columna
+				+ " = ? ORDER BY nombre ASC";
 
-        try (Connection connection = databaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+		try (Connection connection = databaseConnection.getConnection();
+				PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1, valor);
+			statement.setString(1, valor);
 
-            try (ResultSet rs = statement.executeQuery()) {
-                return mapearLista(rs);
-            }
-        }
-    }
+			try (ResultSet rs = statement.executeQuery()) {
+				return mapearLista(rs);
+			}
+		}
+	}
 
-    private List<Empleado> mapearLista(ResultSet rs) throws SQLException {
-        List<Empleado> empleados = new ArrayList<>();
+	private List<Empleado> mapearLista(ResultSet rs) throws SQLException {
+		List<Empleado> empleados = new ArrayList<>();
 
-        while (rs.next()) {
-            empleados.add(mapearEmpleado(rs));
-        }
+		while (rs.next()) {
+			empleados.add(mapearEmpleado(rs));
+		}
 
-        return empleados;
-    }
+		return empleados;
+	}
 
-    private Empleado mapearEmpleado(ResultSet rs) throws SQLException {
-        return new Empleado(
-                rs.getString("id"),
-                rs.getString("password_hash"),
-                rs.getString("nombre"),
-                FuncionAeropuerto.fromDatabase(rs.getString("funcion")),
-                RolEmpleado.fromDatabase(rs.getString("rol")),
-                Turno.fromDatabase(rs.getString("turno"))
-        );
-    }
+	private Empleado mapearEmpleado(ResultSet rs) throws SQLException {
+		return new Empleado(rs.getString("id"), rs.getString("password_hash"), rs.getString("nombre"),
+				FuncionAeropuerto.fromDatabase(rs.getString("funcion")), RolEmpleado.fromDatabase(rs.getString("rol")),
+				Turno.fromDatabase(rs.getString("turno")));
+	}
 }

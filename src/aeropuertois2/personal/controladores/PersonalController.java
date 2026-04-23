@@ -15,34 +15,32 @@ import java.util.List;
 
 public class PersonalController {
 
-    private final AuthService authService;
-    private final EmpleadoService empleadoService;
+	private final AuthService authService;
+	private final EmpleadoService empleadoService;
 
-    public PersonalController() {
-        DatabaseConfig config = DatabaseConfig.load();
-        DatabaseConnection databaseConnection = new DatabaseConnection(config);
-        EmpleadoDao empleadoDao = new EmpleadoDao(databaseConnection);
+	public PersonalController() {
+		DatabaseConfig config = DatabaseConfig.load();
+		DatabaseConnection databaseConnection = new DatabaseConnection(config);
+		EmpleadoDao empleadoDao = new EmpleadoDao(databaseConnection);
 
-        this.authService = new AuthService(empleadoDao);
-        this.empleadoService = new EmpleadoService(empleadoDao);
-    }
+		this.authService = new AuthService(empleadoDao);
+		this.empleadoService = new EmpleadoService(empleadoDao);
+	}
 
-    public Empleado login(String dni, String password)
-            throws SQLException, AuthorizationException, ValidationException {
-        return authService.login(dni, password);
-    }
+	public Empleado login(String dni, String password)
+			throws SQLException, AuthorizationException, ValidationException {
+		return authService.login(dni, password);
+	}
 
-    public List<Empleado> listarTodos() throws SQLException {
-        return empleadoService.listarTodos();
-    }
+	public List<Empleado> listarTodos() throws SQLException {
+		return empleadoService.listarTodos();
+	}
 
-    public List<Empleado> buscarPorNombreODni(String criterio)
-            throws SQLException, ValidationException {
-        return empleadoService.buscarPorNombreODni(criterio);
-    }
+	public List<Empleado> buscarPorNombreODni(String criterio) throws SQLException, ValidationException {
+		return empleadoService.buscarPorNombreODni(criterio);
+	}
 
-    public List<Empleado> filtrar(FiltroTipo tipo, String valor)
-            throws SQLException, ValidationException {
-        return empleadoService.filtrar(tipo, valor);
-    }
+	public List<Empleado> filtrar(FiltroTipo tipo, String valor) throws SQLException, ValidationException {
+		return empleadoService.filtrar(tipo, valor);
+	}
 }
