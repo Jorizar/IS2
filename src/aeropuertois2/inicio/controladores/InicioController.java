@@ -2,6 +2,7 @@ package aeropuertois2.inicio.controladores;
 
 import aeropuertois2.personal.presentacion.PersonalMenu;
 import aeropuertois2.incidencia.presentacion.IncidenciaMenu;
+import aeropuertois2.vuelo.presentacion.VueloMenu;
 
 import java.util.Scanner;
 
@@ -36,7 +37,8 @@ public class InicioController {
 			return true;
 		}
 		case "7" -> {
-			System.out.println("Módulo Vuelos no implementado todavía.");
+			VueloMenu vueloMenu = new VueloMenu();
+			vueloMenu.iniciar(scanner);
 			return true;
 		}
 		case "8" -> {
