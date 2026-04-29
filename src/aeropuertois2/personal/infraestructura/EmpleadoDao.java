@@ -24,7 +24,11 @@ public class EmpleadoDao {
 	}
 
 	public Optional<Empleado> buscarPorId(String id) throws SQLException {
-		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE id = ?";
+		String sql = """
+				SELECT id, password_hash, nombre, funcion, rol, turno
+				FROM empleados
+				WHERE UPPER(TRIM(id)) = UPPER(TRIM(?))
+				""";
 
 		try (Connection connection = databaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -42,7 +46,11 @@ public class EmpleadoDao {
 	}
 
 	public List<Empleado> listarTodos() throws SQLException {
-		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados ORDER BY nombre ASC";
+		String sql = """
+				SELECT id, password_hash, nombre, funcion, rol, turno
+				FROM empleados
+				ORDER BY nombre ASC
+				""";
 
 		try (Connection connection = databaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql);
@@ -53,7 +61,12 @@ public class EmpleadoDao {
 	}
 
 	public List<Empleado> buscarPorDni(String dni) throws SQLException {
-		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE id = ?";
+		String sql = """
+				SELECT id, password_hash, nombre, funcion, rol, turno
+				FROM empleados
+				WHERE UPPER(TRIM(id)) = UPPER(TRIM(?))
+				ORDER BY nombre ASC
+				""";
 
 		try (Connection connection = databaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -67,12 +80,18 @@ public class EmpleadoDao {
 	}
 
 	public List<Empleado> buscarPorNombre(String nombre) throws SQLException {
-		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE nombre = ? ORDER BY nombre ASC";
+		String sql = """
+				SELECT id, password_hash, nombre, funcion, rol, turno
+				FROM empleados
+				WHERE LOWER(REPLACE(TRIM(nombre), ' ', '')) LIKE LOWER(?)
+				ORDER BY nombre ASC
+				""";
 
 		try (Connection connection = databaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
 
-			statement.setString(1, nombre);
+			String nombreNormalizado = nombre == null ? "" : nombre.trim().replaceAll("\\s+", "");
+			statement.setString(1, "%" + nombreNormalizado + "%");
 
 			try (ResultSet rs = statement.executeQuery()) {
 				return mapearLista(rs);
@@ -87,8 +106,10 @@ public class EmpleadoDao {
 		case TURNO -> "turno";
 		};
 
-		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno FROM empleados WHERE " + columna
-				+ " = ? ORDER BY nombre ASC";
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno "
+				+ "FROM empleados "
+				+ "WHERE LOWER(TRIM(" + columna + ")) = LOWER(TRIM(?)) "
+				+ "ORDER BY nombre ASC";
 
 		try (Connection connection = databaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -112,8 +133,12 @@ public class EmpleadoDao {
 	}
 
 	private Empleado mapearEmpleado(ResultSet rs) throws SQLException {
-		return new Empleado(rs.getString("id"), rs.getString("password_hash"), rs.getString("nombre"),
-				FuncionAeropuerto.fromDatabase(rs.getString("funcion")), RolEmpleado.fromDatabase(rs.getString("rol")),
+		return new Empleado(
+				rs.getString("id"),
+				rs.getString("password_hash"),
+				rs.getString("nombre"),
+				FuncionAeropuerto.fromDatabase(rs.getString("funcion")),
+				RolEmpleado.fromDatabase(rs.getString("rol")),
 				Turno.fromDatabase(rs.getString("turno")));
 	}
 }
