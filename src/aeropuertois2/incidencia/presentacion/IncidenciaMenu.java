@@ -23,12 +23,10 @@ public class IncidenciaMenu {
 		this.incidenciaService = IncidenciaService.getInstance(incidenciaDAO);
 	}
 
-	public void iniciar() {
-		try (Scanner scanner = new Scanner(System.in)) {
-			ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
-			ejecutarCrearIncidencia(scanner);
-
-		}
+	public void iniciar(Scanner scanner) {
+		ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
+		ejecutarCrearIncidencia(scanner);
+		
 	}
 
 	private void ejecutarCrearIncidencia(Scanner scanner) {
