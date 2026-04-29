@@ -7,6 +7,7 @@ import aeropuertois2.personal.infraestructura.EmpleadoDao;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 public class EmpleadoService {
 
@@ -23,11 +24,13 @@ public class EmpleadoService {
 	public List<Empleado> buscarPorNombreODni(String criterio) throws SQLException, ValidationException {
 		ValidadorEmpleado.validarBusqueda(criterio);
 
-		if (ValidadorEmpleado.esDni(criterio)) {
-			return empleadoDao.buscarPorDni(criterio.trim());
-		} else {
-			return empleadoDao.buscarPorNombre(criterio.trim());
+		String criterioNormalizado = ValidadorEmpleado.normalizarCriterio(criterio);
+
+		if (ValidadorEmpleado.esDni(criterioNormalizado)) {
+			return empleadoDao.buscarPorDni(ValidadorEmpleado.normalizarDni(criterioNormalizado));
 		}
+
+		return empleadoDao.buscarPorNombre(criterioNormalizado);
 	}
 
 	public List<Empleado> filtrar(FiltroTipo tipo, String valor) throws SQLException, ValidationException {
@@ -39,6 +42,18 @@ public class EmpleadoService {
 			throw new ValidationException("Debe seleccionar un valor de filtro válido.");
 		}
 
-		return empleadoDao.filtrarPor(tipo, valor.trim().toLowerCase());
+		String valorNormalizado = normalizarValorFiltro(tipo, valor);
+
+		return empleadoDao.filtrarPor(tipo, valorNormalizado);
+	}
+
+	private String normalizarValorFiltro(FiltroTipo tipo, String valor) {
+		String valorNormalizado = valor.trim().toLowerCase(Locale.ROOT);
+
+		if (tipo == FiltroTipo.TURNO && valorNormalizado.equals("manana")) {
+			return "mañana";
+		}
+
+		return valorNormalizado;
 	}
 }

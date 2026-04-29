@@ -142,3 +142,66 @@ INSERT INTO nominas (id_nomina, id_empleado, iban_cuenta, bruto, neto, fecha_emi
 ('NOM-222BB', 'EMP-045', 'ES1234567890123456789012', 2800.00, 2240.00, '2024-05-01', 'PAGADA'),
 ('NOM-333CC', 'EMP-089', 'ES9876543210987654321098', 4200.00, 3360.00, '2024-05-01', 'PAGADA');
 
+-- =========================
+-- SUBSISTEMA SEGURIDAD
+-- =========================
+CREATE TABLE Usuario (
+  idUsuario INT NOT NULL,
+  nombre VARCHAR(45),
+  tipo ENUM('Gestor', 'Empleado', 'Visitante'),
+  credencial VARCHAR(45),
+  PRIMARY KEY (idUsuario)
+) ENGINE=InnoDB;
+
+CREATE TABLE ZonaRestringida (
+  idZonaRestringida INT NOT NULL,
+  nombreZona VARCHAR(45),
+  nivelSeguridad INT CHECK (nivelSeguridad BETWEEN 1 AND 10),
+  ubicacion VARCHAR(150),
+  PRIMARY KEY (idZonaRestringida)
+) ENGINE=InnoDB;
+
+CREATE TABLE PermisoAcceso (
+  idPermisoAcceso INT NOT NULL AUTO_INCREMENT,
+  fechaInicio DATE,
+  fechaFin DATE,
+  estado ENUM('Activo', 'Expirado', 'Revocado'),
+  Usuario_idUsuario INT NOT NULL,
+  ZonaRestringida_idZonaRestringida INT NOT NULL,
+  PRIMARY KEY (idPermisoAcceso),
+  CONSTRAINT chk_fechas CHECK (fechaFin >= fechaInicio),
+  CONSTRAINT fk_usuario
+    FOREIGN KEY (Usuario_idUsuario)
+    REFERENCES Usuario(idUsuario),
+  CONSTRAINT fk_zona
+    FOREIGN KEY (ZonaRestringida_idZonaRestringida)
+    REFERENCES ZonaRestringida(idZonaRestringida)
+) ENGINE=InnoDB;
+
+ALTER TABLE PermisoAcceso
+ADD INDEX idx_usuario_zona (Usuario_idUsuario, ZonaRestringida_idZonaRestringida);
+
+INSERT INTO Usuario (idUsuario, nombre, tipo, credencial) VALUES
+(12345678, 'Juan Perez',    'Gestor',    'GES001'),
+(23456789, 'Laura Martin',  'Empleado',  'EMP002'),
+(34567890, 'Carlos Ruiz',   'Empleado',  'EMP003'),
+(45678901, 'Ana Torres',    'Visitante', 'VIS004'),
+(56789012, 'Miguel Santos', 'Gestor',    'GES005');
+
+INSERT INTO ZonaRestringida (idZonaRestringida, nombreZona, nivelSeguridad, ubicacion) VALUES
+(10, 'Pista Norte',          5,  'Zona exterior aeropuerto - acceso vehiculos autorizados'),
+(11, 'Torre de Control',     9,  'Edificio principal, planta superior'),
+(12, 'Hangar Mantenimiento', 7,  'Area tecnica junto a pista sur'),
+(13, 'Sala Servidores',      10, 'Sotano terminal principal, acceso biometrico'),
+(14, 'Almacen Combustible',  8,  'Zona aislada perimetral este');
+
+INSERT INTO PermisoAcceso
+(fechaInicio, fechaFin, estado, Usuario_idUsuario, ZonaRestringida_idZonaRestringida)
+VALUES
+('2025-01-01', '2025-12-31', 'Activo',   12345678, 10),
+('2025-02-01', '2026-02-01', 'Activo',   23456789, 11),
+('2025-03-15', '2025-09-15', 'Expirado', 34567890, 12),
+('2025-01-10', '2025-04-10', 'Revocado', 45678901, 13),
+('2026-05-01', '2026-11-01', 'Activo',   56789012, 14);
+
+

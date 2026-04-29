@@ -2,38 +2,48 @@ package aeropuertois2.personal.aplicaciones;
 
 import aeropuertois2.comun.excepciones.ValidationException;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public final class ValidadorEmpleado {
 
-	private static final Pattern PATRON_NOMBRE = Pattern.compile("^[A-ZÁÉÍÓÚÑ][a-zA-ZáéíóúÁÉÍÓÚñÑ]{0,29}$");
 	private static final Pattern PATRON_DNI = Pattern.compile("^[0-9]{8}[A-Z]$");
+	private static final Pattern PATRON_NOMBRE_BUSQUEDA = Pattern.compile("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]{1,60}$");
 
 	private ValidadorEmpleado() {
 	}
 
 	public static void validarBusqueda(String criterio) throws ValidationException {
-		if (criterio == null || criterio.isBlank()) {
+		String valor = normalizarCriterio(criterio);
+
+		if (valor.isBlank()) {
 			throw new ValidationException("Debe introducir un nombre o un DNI.");
 		}
 
-		String valor = criterio.trim();
-		boolean esNombre = PATRON_NOMBRE.matcher(valor).matches();
-		boolean esDni = PATRON_DNI.matcher(valor).matches();
+		boolean esDni = esDni(valor);
+		boolean esNombre = PATRON_NOMBRE_BUSQUEDA.matcher(valor).matches();
 
-		if (!esNombre && !esDni) {
+		if (!esDni && !esNombre) {
 			throw new ValidationException(
-					"Datos no válidos. Introduzca un nombre válido (máx. 30 caracteres, formato NombreApellido1Apellido2) o un DNI válido (8 números y una letra mayúscula).");
+					"Datos no válidos. Introduzca un nombre o un DNI válido de 8 números y una letra.");
 		}
 	}
 
 	public static void validarDniLogin(String dni) throws ValidationException {
-		if (dni == null || !PATRON_DNI.matcher(dni.trim()).matches()) {
+		if (!esDni(dni)) {
 			throw new ValidationException("El DNI introducido no es válido.");
 		}
 	}
 
 	public static boolean esDni(String criterio) {
-		return criterio != null && PATRON_DNI.matcher(criterio.trim()).matches();
+		return PATRON_DNI.matcher(normalizarDni(criterio)).matches();
+	}
+
+	public static String normalizarDni(String dni) {
+		return dni == null ? "" : dni.trim().toUpperCase(Locale.ROOT);
+	}
+
+	public static String normalizarCriterio(String criterio) {
+		return criterio == null ? "" : criterio.trim().replaceAll("\\s+", " ");
 	}
 }

@@ -42,7 +42,7 @@ public class PersonalMenu {
 		}
 	}
 
-	private void lanzarMenu(Scanner scanner) throws SQLException {
+	private void lanzarMenu(Scanner scanner) {
 		boolean salir = false;
 
 		while (!salir) {
@@ -53,7 +53,7 @@ public class PersonalMenu {
 			System.out.println("4. Volver al inicio");
 			System.out.print("Seleccione una opción: ");
 
-			String opcion = scanner.nextLine();
+			String opcion = scanner.nextLine().trim();
 
 			switch (opcion) {
 			case "1" -> mostrarTodos();
@@ -68,13 +68,17 @@ public class PersonalMenu {
 		}
 	}
 
-	private void mostrarTodos() throws SQLException {
-		ConsolePrinter.printTitulo("Lista completa de empleados");
-		List<Empleado> empleados = personalController.listarTodos();
-		ConsolePrinter.printEmpleados(empleados);
+	private void mostrarTodos() {
+		try {
+			ConsolePrinter.printTitulo("Lista completa de empleados");
+			List<Empleado> empleados = personalController.listarTodos();
+			ConsolePrinter.printEmpleados(empleados);
+		} catch (SQLException e) {
+			System.out.println("Error de base de datos al listar empleados: " + e.getMessage());
+		}
 	}
 
-	private void buscarEmpleados(Scanner scanner) throws SQLException {
+	private void buscarEmpleados(Scanner scanner) {
 		ConsolePrinter.printTitulo("Búsqueda de empleados");
 		System.out.print("Introduzca nombre o DNI: ");
 		String criterio = scanner.nextLine();
@@ -85,16 +89,18 @@ public class PersonalMenu {
 		} catch (ValidationException e) {
 			System.out.println("Error: " + e.getMessage());
 			System.out.println("El sistema solicita que introduzca datos válidos.");
+		} catch (SQLException e) {
+			System.out.println("Error de base de datos al buscar empleados: " + e.getMessage());
 		}
 	}
 
-	private void filtrarEmpleados(Scanner scanner) throws SQLException {
+	private void filtrarEmpleados(Scanner scanner) {
 		ConsolePrinter.printTitulo("Filtro de empleados");
 		System.out.println("1. Función");
 		System.out.println("2. Rol");
 		System.out.println("3. Turno");
 		System.out.print("Seleccione el tipo de filtro: ");
-		String opcionTipo = scanner.nextLine();
+		String opcionTipo = scanner.nextLine().trim();
 
 		FiltroTipo tipo;
 		String valor;
@@ -118,11 +124,18 @@ public class PersonalMenu {
 		}
 		}
 
+		if (valor.isBlank()) {
+			System.out.println("Valor de filtro no válido.");
+			return;
+		}
+
 		try {
 			List<Empleado> empleados = personalController.filtrar(tipo, valor);
 			ConsolePrinter.printEmpleados(empleados);
 		} catch (ValidationException e) {
 			System.out.println("Error: " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("Error de base de datos al filtrar empleados: " + e.getMessage());
 		}
 	}
 
@@ -136,7 +149,7 @@ public class PersonalMenu {
 		System.out.println("7. vuelos");
 		System.out.print("Seleccione una función: ");
 
-		return switch (scanner.nextLine()) {
+		return switch (scanner.nextLine().trim()) {
 		case "1" -> "financiero";
 		case "2" -> "incidencias";
 		case "3" -> "operaciones";
@@ -153,7 +166,7 @@ public class PersonalMenu {
 		System.out.println("2. administrador");
 		System.out.print("Seleccione un rol: ");
 
-		return switch (scanner.nextLine()) {
+		return switch (scanner.nextLine().trim()) {
 		case "1" -> "personal de equipo";
 		case "2" -> "administrador";
 		default -> "";
@@ -166,7 +179,7 @@ public class PersonalMenu {
 		System.out.println("3. noche");
 		System.out.print("Seleccione un turno: ");
 
-		return switch (scanner.nextLine()) {
+		return switch (scanner.nextLine().trim()) {
 		case "1" -> "mañana";
 		case "2" -> "tarde";
 		case "3" -> "noche";
