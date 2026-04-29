@@ -32,3 +32,17 @@ INSERT INTO empleados (id, password_hash, nombre, funcion, rol, turno) VALUES
 ('66778899J', '3cb7ea0f12fbdabc1fb39a71869f22da26da30bd4d9c6ff4391092f3b4014c97', 'MarioVegaPascual',      'financiero',   'personal de equipo', 'mañana'),
 ('77889900N', '3cb7ea0f12fbdabc1fb39a71869f22da26da30bd4d9c6ff4391092f3b4014c97', 'SandraMorenoIglesias',  'operaciones',  'personal de equipo', 'tarde'),
 ('88990011R', '3cb7ea0f12fbdabc1fb39a71869f22da26da30bd4d9c6ff4391092f3b4014c97', 'HectorBravoLuna',       'vuelos',       'personal de equipo', 'noche');
+
+
+
+CREATE TABLE avisos  (
+	idAviso CHAR(9) PRIMARY KEY,
+	fecha DATETIME NOT NULL,
+	mensaje VARCHAR(200)
+);
+
+INSERT INTO avisos(idAviso, fecha, mensaje) VALUES
+('100000003', '2026-04-20 14:45:00', 'Cinta de recogida de equipajes número 4 atascada.'),
+('100000007', '2026-04-21 12:05:00', 'Puerta automática de acceso principal bloqueada a la mitad.'),
+('100000009', '2026-04-21 15:30:00', 'Se produce un retraso en el vuelo UX9043.'),
+('100000010', '2026-04-21 16:45:00', 'Tripulación del vuelo IB3442 llega tarde al embarque por atasco.');

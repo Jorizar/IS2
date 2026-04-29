@@ -1,5 +1,6 @@
 package aeropuertois2.inicio.controladores;
 
+import aeropuertois2.paneles.presentacion.VistaPaneles;
 import aeropuertois2.personal.presentacion.PersonalMenu;
 
 public class InicioController {
@@ -24,7 +25,8 @@ public class InicioController {
                 return true;
             }
             case "5" -> {
-                System.out.println("Módulo Paneles no implementado todavía.");
+            	VistaPaneles vista = new VistaPaneles();
+                vista.mostrarAvisos();
                 return true;
             }
             case "6" -> {
