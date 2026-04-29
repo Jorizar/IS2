@@ -1,6 +1,7 @@
 package aeropuertois2.inicio.controladores;
 
 import aeropuertois2.personal.presentacion.PersonalMenu;
+import aeropuertois2.finanzas.presentacion.FinanzasMenu;
 import aeropuertois2.incidencia.presentacion.IncidenciaMenu;
 import aeropuertois2.vuelo.presentacion.VueloMenu;
 
@@ -16,7 +17,8 @@ public class InicioController {
 			return true;
 		}
 		case "2" -> {
-			System.out.println("Módulo Financiera no implementado todavía.");
+			FinanzasMenu finanzasMenu = new FinanzasMenu();
+			finanzasMenu.iniciar(scanner);
 			return true;
 		}
 		case "3" -> {

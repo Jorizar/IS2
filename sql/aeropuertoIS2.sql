@@ -65,3 +65,80 @@ INSERT INTO incidencias (idIncidencia, tipo, estado, fecha, descrip, causa) VALU
 ('100000009', 'General', 'Asignada', '2026-04-21 15:30:00', 'Se produce un retraso en el vuelo UX9043.', 'Causas meteorológicas'),
 ('100000010', 'General', 'Abierta', '2026-04-21 16:45:00', 'Tripulación del vuelo IB3442 llega tarde al embarque  por atasco.', 'Tráfico externo al aeropuerto');
 
+/*-------------------------------------------------
+	FINANZAS
+-------------------------------------------------*/
+
+CREATE TABLE IF NOT EXISTS cuentas_bancarias (
+    iban VARCHAR(34) PRIMARY KEY,
+    nombre_banco VARCHAR(100) NOT NULL,
+    sucursal VARCHAR(50) NOT NULL,
+    tipo_cuenta VARCHAR(50) NOT NULL,
+    moneda VARCHAR(10) NOT NULL,
+    saldo DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
+    estado_validacion VARCHAR(20) NOT NULL,
+    
+    -- Validamos que el IBAN empiece por 2 letras (Ej: ES) y sea coherente
+    CONSTRAINT chk_iban_formato CHECK (iban REGEXP '^[A-Z]{2}[0-9A-Z]{13,32}$'),
+    -- Restringimos los tipos de cuenta
+    CONSTRAINT chk_tipo_cuenta CHECK (tipo_cuenta IN ('Corriente', 'Ahorro', 'Crédito')),
+    -- El saldo inicial nunca debería ser menor a 0 al crear la cuenta
+    CONSTRAINT chk_saldo_positivo CHECK (saldo >= 0),
+    -- Bloqueamos los estados posibles
+    CONSTRAINT chk_estado_val CHECK (estado_validacion IN ('PENDIENTE', 'VALIDADA'))
+);
+
+CREATE TABLE IF NOT EXISTS registros_contables (
+    id_registro VARCHAR(20) PRIMARY KEY,
+    cuenta_contable VARCHAR(34) NOT NULL,
+    concepto VARCHAR(255) NOT NULL,
+    tipo_operacion VARCHAR(20) NOT NULL,
+    monto DECIMAL(15, 2) NOT NULL,
+    estado_balance BOOLEAN NOT NULL DEFAULT TRUE,
+    
+    -- Forzamos que el ID siga el patrón que generamos con UUID en Java (REG-XXXXXX)
+    CONSTRAINT chk_id_registro CHECK (id_registro LIKE 'REG-%'),
+    -- Solo se pueden registrar estos 3 tipos de operaciones
+    CONSTRAINT chk_tipo_operacion CHECK (tipo_operacion IN ('INGRESO', 'EGRESO', 'TRANSFERENCIA')),
+    -- No se pueden registrar montos negativos
+    CONSTRAINT chk_monto_positivo CHECK (monto > 0)
+    
+    FOREIGN KEY (cuenta_contable) REFERENCES cuentas_bancarias(iban),
+);
+
+CREATE TABLE IF NOT EXISTS nominas (
+    id_nomina VARCHAR(20) PRIMARY KEY,
+    id_empleado VARCHAR(50) NOT NULL,
+    iban_cuenta VARCHAR(34) NOT NULL,
+    bruto DECIMAL(10, 2) NOT NULL,
+    neto DECIMAL(10, 2) NOT NULL,
+    fecha_emision DATE NOT NULL,
+    estado VARCHAR(20) NOT NULL,
+    
+    -- Forzamos el patrón del ID (NOM-XXXXX)
+    CONSTRAINT chk_id_nomina CHECK (id_nomina LIKE 'NOM-%'),
+    -- Lógica de negocio dura: El bruto siempre debe ser mayor al neto
+    CONSTRAINT chk_importes_coherentes CHECK (bruto > neto AND neto > 0),
+    -- Bloqueamos los estados
+    CONSTRAINT chk_estado_nomina CHECK (estado IN ('PENDIENTE', 'PAGADA'))
+    
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado) ON DELETE RESTRICT,
+    FOREIGN KEY (iban_cuenta) REFERENCES cuentas_bancarias(iban) ON DELETE RESTRICT
+);
+
+
+INSERT INTO cuentas_bancarias (iban, nombre_banco, sucursal, tipo_cuenta, moneda, saldo, estado_validacion) VALUES
+('ES1234567890123456789012', 'Banco Santander', 'Oficina Central', 'Corriente', 'EUR', 1500000.50, 'VALIDADA'),
+('ES9876543210987654321098', 'BBVA', 'Sucursal T4', 'Ahorro', 'EUR', 500000.00, 'VALIDADA'),
+('US1122334455667788990011', 'Chase Bank', 'NY Branch', 'Corriente', 'USD', 250000.00, 'PENDIENTE');
+
+INSERT INTO registros_contables (id_registro, cuenta_contable, concepto, tipo_operacion, monto, estado_balance) VALUES
+('REG-A1B2C3', 'ES1234567890123456789012', 'Ingreso por tasas aeroportuarias', 'INGRESO', 45000.00, 1),
+('REG-X9Y8Z7', 'ES1234567890123456789012', 'Mantenimiento de pistas', 'EGRESO', 12500.50, 1),
+('REG-M4N5P6', 'ES9876543210987654321098', 'Traspaso a fondo de emergencias', 'TRANSFERENCIA', 50000.00, 1);
+
+INSERT INTO nominas (id_nomina, id_empleado, iban_cuenta, bruto, neto, fecha_emision, estado) VALUES
+('NOM-111AA', 'EMP-001', 'ES1234567890123456789012', 3500.00, 2800.00, '2024-05-01', 'PAGADA'),
+('NOM-222BB', 'EMP-045', 'ES1234567890123456789012', 2800.00, 2240.00, '2024-05-01', 'PAGADA'),
+('NOM-333CC', 'EMP-089', 'ES9876543210987654321098', 4200.00, 3360.00, '2024-05-01', 'PAGADA');
+
