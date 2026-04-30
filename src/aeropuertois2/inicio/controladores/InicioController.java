@@ -23,7 +23,7 @@ public class InicioController {
 		}
 		case "3" -> {
 			IncidenciaMenu incidenciaMenu = new IncidenciaMenu();
-			incidenciaMenu.iniciar();
+			incidenciaMenu.iniciar(scanner);
 			return true;
 		}
 		case "4" -> {

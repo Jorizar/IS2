@@ -13,14 +13,15 @@ public class InicioMenu {
 	}
 
 	public void iniciar() {
-		Scanner scanner = new Scanner(System.in);
-		boolean continuar = true;
-
-		while (continuar) {
-			mostrarPantallaInicio();
-			System.out.print("Seleccione un departamento: ");
-			String opcion = scanner.nextLine();
-			continuar = inicioController.procesarOpcion(opcion, scanner);
+		try (Scanner scanner = new Scanner(System.in)) {
+			boolean continuar = true;
+		
+			while (continuar) {
+				mostrarPantallaInicio();
+				System.out.print("Seleccione un departamento: ");
+				String opcion = scanner.nextLine();
+				continuar = inicioController.procesarOpcion(opcion, scanner);
+			}
 		}
 	}
 
