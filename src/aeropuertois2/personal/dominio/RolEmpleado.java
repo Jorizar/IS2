@@ -6,21 +6,28 @@ public enum RolEmpleado {
 	PERSONAL_DE_EQUIPO, ADMINISTRADOR;
 
 	public static RolEmpleado fromDatabase(String value) {
-		if (value == null || value.isBlank()) {
+		if (value == null || value.trim().isEmpty()) {
 			throw new IllegalArgumentException("Rol no válido en BD: valor vacío");
 		}
 
-		return switch (value.trim().toLowerCase(Locale.ROOT)) {
-		case "personal de equipo" -> PERSONAL_DE_EQUIPO;
-		case "administrador" -> ADMINISTRADOR;
-		default -> throw new IllegalArgumentException("Rol no válido en BD: " + value);
-		};
+		String normalizado = value.trim().toLowerCase(Locale.ROOT);
+
+		if (normalizado.equals("personal de equipo")) {
+			return PERSONAL_DE_EQUIPO;
+		}
+
+		if (normalizado.equals("administrador")) {
+			return ADMINISTRADOR;
+		}
+
+		throw new IllegalArgumentException("Rol no válido en BD: " + value);
 	}
 
 	public String toDatabaseValue() {
-		return switch (this) {
-		case PERSONAL_DE_EQUIPO -> "personal de equipo";
-		case ADMINISTRADOR -> "administrador";
-		};
+		if (this == PERSONAL_DE_EQUIPO) {
+			return "personal de equipo";
+		}
+
+		return "administrador";
 	}
 }

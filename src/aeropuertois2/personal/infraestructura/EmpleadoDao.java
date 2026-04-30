@@ -24,11 +24,9 @@ public class EmpleadoDao {
 	}
 
 	public Optional<Empleado> buscarPorId(String id) throws SQLException {
-		String sql = """
-				SELECT id, password_hash, nombre, funcion, rol, turno
-				FROM empleados
-				WHERE UPPER(TRIM(id)) = UPPER(TRIM(?))
-				""";
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno "
+				+ "FROM empleados "
+				+ "WHERE UPPER(TRIM(id)) = UPPER(TRIM(?))";
 
 		try (Connection connection = databaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -46,11 +44,9 @@ public class EmpleadoDao {
 	}
 
 	public List<Empleado> listarTodos() throws SQLException {
-		String sql = """
-				SELECT id, password_hash, nombre, funcion, rol, turno
-				FROM empleados
-				ORDER BY nombre ASC
-				""";
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno "
+				+ "FROM empleados "
+				+ "ORDER BY nombre ASC";
 
 		try (Connection connection = databaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql);
@@ -61,12 +57,10 @@ public class EmpleadoDao {
 	}
 
 	public List<Empleado> buscarPorDni(String dni) throws SQLException {
-		String sql = """
-				SELECT id, password_hash, nombre, funcion, rol, turno
-				FROM empleados
-				WHERE UPPER(TRIM(id)) = UPPER(TRIM(?))
-				ORDER BY nombre ASC
-				""";
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno "
+				+ "FROM empleados "
+				+ "WHERE UPPER(TRIM(id)) = UPPER(TRIM(?)) "
+				+ "ORDER BY nombre ASC";
 
 		try (Connection connection = databaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -80,12 +74,10 @@ public class EmpleadoDao {
 	}
 
 	public List<Empleado> buscarPorNombre(String nombre) throws SQLException {
-		String sql = """
-				SELECT id, password_hash, nombre, funcion, rol, turno
-				FROM empleados
-				WHERE LOWER(REPLACE(TRIM(nombre), ' ', '')) LIKE LOWER(?)
-				ORDER BY nombre ASC
-				""";
+		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno "
+				+ "FROM empleados "
+				+ "WHERE LOWER(REPLACE(TRIM(nombre), ' ', '')) LIKE LOWER(?) "
+				+ "ORDER BY nombre ASC";
 
 		try (Connection connection = databaseConnection.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -100,11 +92,17 @@ public class EmpleadoDao {
 	}
 
 	public List<Empleado> filtrarPor(FiltroTipo tipo, String valor) throws SQLException {
-		String columna = switch (tipo) {
-		case FUNCION -> "funcion";
-		case ROL -> "rol";
-		case TURNO -> "turno";
-		};
+		String columna;
+
+		if (tipo == FiltroTipo.FUNCION) {
+			columna = "funcion";
+		} else if (tipo == FiltroTipo.ROL) {
+			columna = "rol";
+		} else if (tipo == FiltroTipo.TURNO) {
+			columna = "turno";
+		} else {
+			throw new IllegalArgumentException("Tipo de filtro no válido.");
+		}
 
 		String sql = "SELECT id, password_hash, nombre, funcion, rol, turno "
 				+ "FROM empleados "
@@ -123,7 +121,7 @@ public class EmpleadoDao {
 	}
 
 	private List<Empleado> mapearLista(ResultSet rs) throws SQLException {
-		List<Empleado> empleados = new ArrayList<>();
+		List<Empleado> empleados = new ArrayList<Empleado>();
 
 		while (rs.next()) {
 			empleados.add(mapearEmpleado(rs));

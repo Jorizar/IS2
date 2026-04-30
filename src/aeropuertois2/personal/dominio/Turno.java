@@ -6,23 +6,36 @@ public enum Turno {
 	MANANA, TARDE, NOCHE;
 
 	public static Turno fromDatabase(String value) {
-		if (value == null || value.isBlank()) {
+		if (value == null || value.trim().isEmpty()) {
 			throw new IllegalArgumentException("Turno no válido en BD: valor vacío");
 		}
 
-		return switch (value.trim().toLowerCase(Locale.ROOT)) {
-		case "mañana", "manana" -> MANANA;
-		case "tarde" -> TARDE;
-		case "noche" -> NOCHE;
-		default -> throw new IllegalArgumentException("Turno no válido en BD: " + value);
-		};
+		String normalizado = value.trim().toLowerCase(Locale.ROOT);
+
+		if (normalizado.equals("mañana") || normalizado.equals("manana")) {
+			return MANANA;
+		}
+
+		if (normalizado.equals("tarde")) {
+			return TARDE;
+		}
+
+		if (normalizado.equals("noche")) {
+			return NOCHE;
+		}
+
+		throw new IllegalArgumentException("Turno no válido en BD: " + value);
 	}
 
 	public String toDatabaseValue() {
-		return switch (this) {
-		case MANANA -> "mañana";
-		case TARDE -> "tarde";
-		case NOCHE -> "noche";
-		};
+		if (this == MANANA) {
+			return "mañana";
+		}
+
+		if (this == TARDE) {
+			return "tarde";
+		}
+
+		return "noche";
 	}
 }

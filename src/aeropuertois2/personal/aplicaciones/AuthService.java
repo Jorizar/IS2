@@ -19,19 +19,24 @@ public class AuthService {
 
 	public Empleado login(String dni, String password)
 			throws SQLException, AuthorizationException, ValidationException {
+
 		ValidadorEmpleado.validarDniLogin(dni);
+
 		String dniNormalizado = ValidadorEmpleado.normalizarDni(dni);
+		String passwordNormalizada = password == null ? "" : password.trim();
 
 		Optional<Empleado> empleadoOpt = empleadoDao.buscarPorId(dniNormalizado);
 
-		if (empleadoOpt.isEmpty()) {
+		if (!empleadoOpt.isPresent()) {
 			throw new AuthorizationException("Credenciales inválidas.");
 		}
 
 		Empleado empleado = empleadoOpt.get();
-		String hashIntroducido = HashUtil.sha256(password == null ? "" : password);
 
-		if (!empleado.getPasswordHash().equals(hashIntroducido)) {
+		String passwordHashBd = empleado.getPasswordHash();
+		String hashIntroducido = HashUtil.sha256(passwordNormalizada);
+
+		if (passwordHashBd == null || !passwordHashBd.trim().equalsIgnoreCase(hashIntroducido)) {
 			throw new AuthorizationException("Credenciales inválidas.");
 		}
 

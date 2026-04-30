@@ -6,7 +6,7 @@ public enum FuncionAeropuerto {
 	FINANCIERO, INCIDENCIAS, OPERACIONES, PANELES, PERSONAL, SEGURIDAD, VUELOS;
 
 	public static FuncionAeropuerto fromDatabase(String value) {
-		if (value == null || value.isBlank()) {
+		if (value == null || value.trim().isEmpty()) {
 			throw new IllegalArgumentException("Función no válida en BD: valor vacío");
 		}
 

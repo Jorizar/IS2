@@ -16,7 +16,7 @@ public final class ValidadorEmpleado {
 	public static void validarBusqueda(String criterio) throws ValidationException {
 		String valor = normalizarCriterio(criterio);
 
-		if (valor.isBlank()) {
+		if (estaVacio(valor)) {
 			throw new ValidationException("Debe introducir un nombre o un DNI.");
 		}
 
@@ -45,5 +45,9 @@ public final class ValidadorEmpleado {
 
 	public static String normalizarCriterio(String criterio) {
 		return criterio == null ? "" : criterio.trim().replaceAll("\\s+", " ");
+	}
+
+	public static boolean estaVacio(String texto) {
+		return texto == null || texto.trim().isEmpty();
 	}
 }

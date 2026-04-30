@@ -38,7 +38,7 @@ public class EmpleadoService {
 			throw new ValidationException("Debe seleccionar un tipo de filtro válido.");
 		}
 
-		if (valor == null || valor.isBlank()) {
+		if (ValidadorEmpleado.estaVacio(valor)) {
 			throw new ValidationException("Debe seleccionar un valor de filtro válido.");
 		}
 

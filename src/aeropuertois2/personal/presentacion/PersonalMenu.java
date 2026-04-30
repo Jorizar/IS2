@@ -33,7 +33,9 @@ public class PersonalMenu {
 
 			lanzarMenu(scanner);
 
-		} catch (ValidationException | AuthorizationException e) {
+		} catch (ValidationException e) {
+			System.out.println(e.getMessage());
+		} catch (AuthorizationException e) {
 			System.out.println(e.getMessage());
 		} catch (SQLException e) {
 			System.out.println("Error de base de datos: " + e.getMessage());
@@ -55,15 +57,17 @@ public class PersonalMenu {
 
 			String opcion = scanner.nextLine().trim();
 
-			switch (opcion) {
-			case "1" -> mostrarTodos();
-			case "2" -> buscarEmpleados(scanner);
-			case "3" -> filtrarEmpleados(scanner);
-			case "4" -> {
+			if (opcion.equals("1")) {
+				mostrarTodos();
+			} else if (opcion.equals("2")) {
+				buscarEmpleados(scanner);
+			} else if (opcion.equals("3")) {
+				filtrarEmpleados(scanner);
+			} else if (opcion.equals("4")) {
 				salir = true;
 				System.out.println("Volviendo al menú principal...");
-			}
-			default -> System.out.println("Opción no válida.");
+			} else {
+				System.out.println("Opción no válida.");
 			}
 		}
 	}
@@ -105,26 +109,21 @@ public class PersonalMenu {
 		FiltroTipo tipo;
 		String valor;
 
-		switch (opcionTipo) {
-		case "1" -> {
+		if (opcionTipo.equals("1")) {
 			tipo = FiltroTipo.FUNCION;
 			valor = seleccionarFuncion(scanner);
-		}
-		case "2" -> {
+		} else if (opcionTipo.equals("2")) {
 			tipo = FiltroTipo.ROL;
 			valor = seleccionarRol(scanner);
-		}
-		case "3" -> {
+		} else if (opcionTipo.equals("3")) {
 			tipo = FiltroTipo.TURNO;
 			valor = seleccionarTurno(scanner);
-		}
-		default -> {
+		} else {
 			System.out.println("Tipo de filtro no válido.");
 			return;
 		}
-		}
 
-		if (valor.isBlank()) {
+		if (valor == null || valor.trim().isEmpty()) {
 			System.out.println("Valor de filtro no válido.");
 			return;
 		}
@@ -149,16 +148,25 @@ public class PersonalMenu {
 		System.out.println("7. vuelos");
 		System.out.print("Seleccione una función: ");
 
-		return switch (scanner.nextLine().trim()) {
-		case "1" -> "financiero";
-		case "2" -> "incidencias";
-		case "3" -> "operaciones";
-		case "4" -> "paneles";
-		case "5" -> "personal";
-		case "6" -> "seguridad";
-		case "7" -> "vuelos";
-		default -> "";
-		};
+		String opcion = scanner.nextLine().trim();
+
+		if (opcion.equals("1")) {
+			return "financiero";
+		} else if (opcion.equals("2")) {
+			return "incidencias";
+		} else if (opcion.equals("3")) {
+			return "operaciones";
+		} else if (opcion.equals("4")) {
+			return "paneles";
+		} else if (opcion.equals("5")) {
+			return "personal";
+		} else if (opcion.equals("6")) {
+			return "seguridad";
+		} else if (opcion.equals("7")) {
+			return "vuelos";
+		}
+
+		return "";
 	}
 
 	private String seleccionarRol(Scanner scanner) {
@@ -166,11 +174,15 @@ public class PersonalMenu {
 		System.out.println("2. administrador");
 		System.out.print("Seleccione un rol: ");
 
-		return switch (scanner.nextLine().trim()) {
-		case "1" -> "personal de equipo";
-		case "2" -> "administrador";
-		default -> "";
-		};
+		String opcion = scanner.nextLine().trim();
+
+		if (opcion.equals("1")) {
+			return "personal de equipo";
+		} else if (opcion.equals("2")) {
+			return "administrador";
+		}
+
+		return "";
 	}
 
 	private String seleccionarTurno(Scanner scanner) {
@@ -179,11 +191,16 @@ public class PersonalMenu {
 		System.out.println("3. noche");
 		System.out.print("Seleccione un turno: ");
 
-		return switch (scanner.nextLine().trim()) {
-		case "1" -> "mañana";
-		case "2" -> "tarde";
-		case "3" -> "noche";
-		default -> "";
-		};
+		String opcion = scanner.nextLine().trim();
+
+		if (opcion.equals("1")) {
+			return "mañana";
+		} else if (opcion.equals("2")) {
+			return "tarde";
+		} else if (opcion.equals("3")) {
+			return "noche";
+		}
+
+		return "";
 	}
 }

@@ -24,21 +24,32 @@ public class DatabaseConfig {
 			InputStream input = DatabaseConfig.class.getClassLoader().getResourceAsStream("config.properties");
 
 			if (input != null) {
-				try (input) {
+				try {
 					properties.load(input);
 					return construirConfig(properties);
+				} finally {
+					input.close();
 				}
 			}
 
-			Path[] rutasPosibles = new Path[] { Path.of("src/resources/config.properties"),
-					Path.of("src/main/resources/config.properties"), Path.of("target/classes/config.properties"),
-					Path.of("config.properties") };
+			Path[] rutasPosibles = new Path[] {
+					Path.of("src/resources/config.properties"),
+					Path.of("src/main/resources/config.properties"),
+					Path.of("target/classes/config.properties"),
+					Path.of("config.properties")
+			};
 
 			for (Path ruta : rutasPosibles) {
 				if (Files.exists(ruta)) {
-					try (InputStream fileInput = Files.newInputStream(ruta)) {
+					InputStream fileInput = null;
+					try {
+						fileInput = Files.newInputStream(ruta);
 						properties.load(fileInput);
 						return construirConfig(properties);
+					} finally {
+						if (fileInput != null) {
+							fileInput.close();
+						}
 					}
 				}
 			}
