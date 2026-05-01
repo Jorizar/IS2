@@ -4,6 +4,7 @@ import aeropuertois2.personal.presentacion.PersonalMenu;
 import aeropuertois2.finanzas.presentacion.FinanzasMenu;
 import aeropuertois2.incidencia.presentacion.IncidenciaMenu;
 import aeropuertois2.vuelo.presentacion.VueloMenu;
+import aeropuertois2.operaciones.presentacion.OperacionesMenu;
 
 import java.util.Scanner;
 
@@ -29,9 +30,9 @@ public class InicioController {
 				incidenciaMenu.iniciar(scanner);
 				return true;
 			}
-			case "4" -> 
-			{
-				System.out.println("Módulo Operaciones no implementado todavía.");
+			case "4" -> {
+				OperacionesMenu operacionesMenu = new OperacionesMenu();
+				operacionesMenu.iniciar(scanner);
 				return true;
 			}
 			case "5" -> 
