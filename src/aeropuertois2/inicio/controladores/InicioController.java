@@ -11,46 +11,55 @@ public class InicioController {
 
 	public boolean procesarOpcion(String opcion, Scanner scanner) {
 		switch (opcion) {
-		case "1" -> {
-			PersonalMenu personalMenu = new PersonalMenu();
-			personalMenu.iniciar(scanner);
-			return true;
-		}
-		case "2" -> {
-			FinanzasMenu finanzasMenu = new FinanzasMenu();
-			finanzasMenu.iniciar(scanner);
-			return true;
-		}
-		case "3" -> {
-			IncidenciaMenu incidenciaMenu = new IncidenciaMenu();
-			incidenciaMenu.iniciar(scanner);
-			return true;
-		}
-		case "4" -> {
-			System.out.println("Módulo Operaciones no implementado todavía.");
-			return true;
-		}
-		case "5" -> {
-			System.out.println("Módulo Paneles no implementado todavía.");
-			return true;
-		}
-		case "6" -> {
-			System.out.println("Módulo Seguridad no implementado todavía.");
-			return true;
-		}
-		case "7" -> {
-			VueloMenu vueloMenu = new VueloMenu();
-			vueloMenu.iniciar(scanner);
-			return true;
-		}
-		case "8" -> {
-			System.out.println("Saliendo del sistema...");
-			return false;
-		}
-		default -> {
-			System.out.println("Opción no válida.");
-			return true;
-		}
+			case "1" -> 
+			{
+				PersonalMenu personalMenu = new PersonalMenu();
+				personalMenu.iniciar(scanner);
+				return true;
+			}
+			case "2" -> 
+			{
+				FinanzasMenu finanzasMenu = new FinanzasMenu();
+				finanzasMenu.iniciar(scanner);
+				return true;
+			}
+			case "3" -> 
+			{
+				IncidenciaMenu incidenciaMenu = new IncidenciaMenu();
+				incidenciaMenu.iniciar(scanner);
+				return true;
+			}
+			case "4" -> 
+			{
+				System.out.println("Módulo Operaciones no implementado todavía.");
+				return true;
+			}
+			case "5" -> 
+			{
+				System.out.println("Módulo Paneles no implementado todavía.");
+				return true;
+			}
+			case "6" -> 
+			{
+				System.out.println("Módulo Seguridad no implementado todavía.");
+				return true;
+			}
+			case "7" -> 
+			{
+				VueloMenu vueloMenu = new VueloMenu();
+				vueloMenu.iniciar(scanner);
+				return true;
+			}
+			case "8" -> 
+			{
+				System.out.println("Saliendo del sistema...");
+				return false;
+			}
+			default -> 
+			{
+				System.out.println("Opción no válida.");
+				return true;
+			}
 		}
 	}
 }
