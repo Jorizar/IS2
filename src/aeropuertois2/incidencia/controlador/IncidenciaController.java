@@ -4,10 +4,12 @@ import aeropuertois2.comun.config.DatabaseConfig;
 import aeropuertois2.comun.config.DatabaseConnection;
 import aeropuertois2.comun.excepciones.ValidationException;
 import aeropuertois2.incidencia.aplicaciones.IncidenciaService;
+import aeropuertois2.incidencia.dominio.Incidencia;
 import aeropuertois2.incidencia.dominio.tipoIncidencia;
 import aeropuertois2.incidencia.infrastructura.IncidenciaDAO;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class IncidenciaController {
 
@@ -25,4 +27,8 @@ public class IncidenciaController {
 			throws SQLException, ValidationException {
 		incidenciaService.crearIncidencia(id, tipo, descrip, causa);
 	}
+	
+	public List<Incidencia> mostrarIncidencias() throws SQLException { 
+        return incidenciaService.mostrarIncidencias();
+    }
 }

@@ -6,6 +6,7 @@ import aeropuertois2.incidencia.dominio.tipoIncidencia;
 import aeropuertois2.incidencia.infrastructura.IncidenciaDAO;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class IncidenciaService {
 	private static IncidenciaService instancia; // unica instancia (singleton)
@@ -39,4 +40,8 @@ public class IncidenciaService {
 
 		System.out.println("Incidencia creada con exito.");
 	}
+	
+	public List<Incidencia> mostrarIncidencias() throws SQLException {
+        return incidenciaDao.mostrarIncidencias();
+    }
 }

@@ -20,15 +20,15 @@ public class ValidadorIncidencia {
 
 	// validar descripcion
 	public static void validarDescrip(String descrip) throws ValidationException {
-		if (descrip.length() > 200)
+		if (descrip == null || descrip.trim().isBlank()) // obligatorio
+			throw new ValidationException("Es necesario introducir una descripcion.");
+		else if (descrip.length() > 200)
 			throw new ValidationException("La descripcion no puede superar los 200 caracteres.");
 	}
 
 	// validar causa
 	public static void validarCausa(String causa) throws ValidationException {
-		if (causa == null || causa.trim().isBlank()) // obligatorio
-			throw new ValidationException("Es necesario introducir una causa.");
-		else if (causa.length() > 100)
+		if (causa.length() > 100)
 			throw new ValidationException("La causa no puede superar los 100 caracteres.");
 	}
 

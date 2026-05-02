@@ -3,6 +3,7 @@ package aeropuertois2.incidencia.presentacion;
 import aeropuertois2.comun.excepciones.ValidationException;
 import aeropuertois2.incidencia.aplicaciones.IncidenciaService;
 import aeropuertois2.incidencia.aplicaciones.ValidadorIncidencia;
+import aeropuertois2.incidencia.dominio.Incidencia;
 import aeropuertois2.incidencia.dominio.tipoIncidencia;
 import aeropuertois2.incidencia.infrastructura.IncidenciaDAO;
 import aeropuertois2.comun.config.DatabaseConfig;
@@ -10,6 +11,7 @@ import aeropuertois2.comun.config.DatabaseConnection; // Asumiendo que esta es l
 import aeropuertois2.personal.presentacion.ConsolePrinter;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 public class IncidenciaMenu {
@@ -24,8 +26,27 @@ public class IncidenciaMenu {
 	}
 
 	public void iniciar(Scanner scanner) {
-		ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
-		ejecutarCrearIncidencia(scanner);
+		//ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
+		//ejecutarCrearIncidencia(scanner);
+		
+		
+		boolean salir = false;
+        while (!salir) {
+            ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
+            System.out.println("1. Crear nueva incidencia");
+            System.out.println("2. Mostrar todas las incidencias");
+            System.out.println("3. Volver al menú principal");
+            System.out.print("Seleccione una opción: ");
+            
+            String opcion = scanner.nextLine();
+            
+            switch (opcion) {
+                case "1" -> ejecutarCrearIncidencia(scanner);
+                case "2" -> ejecutarMostrarIncidencias();
+                case "3" -> salir = true;
+                default -> System.out.println("Opción no válida.");
+            }
+        }
 		
 	}
 
@@ -111,4 +132,27 @@ public class IncidenciaMenu {
 
 		return op.equals("2") ? tipoIncidencia.PERSONAL : tipoIncidencia.GENERAL;
 	}
+	
+	
+	
+	
+	private void ejecutarMostrarIncidencias() {
+        System.out.println("\n--- LISTADO DE INCIDENCIAS ---");
+        try {
+        	List<Incidencia> incidencias = incidenciaService.mostrarIncidencias();
+            
+            if (incidencias.isEmpty()) //en caso de que este vacio (no va a pasar): 
+                System.out.println("No hay ninguna incidencia registrada en la base de datos.");
+            else 
+            {
+                for (Incidencia inc : incidencias) 
+                    System.out.println(inc.toString());
+            }
+            
+            System.out.println("-------------------------------\n");
+            
+        } catch (SQLException e) {
+            System.out.println("ERROR al leer la base de datos: " + e.getMessage());
+        }
+    }
 }
