@@ -43,8 +43,8 @@ CREATE TABLE incidencias (
     tipo VARCHAR(10) NOT NULL, 
     estado VARCHAR(20) NOT NULL, 
     fecha DATETIME NOT NULL, 
-    descrip VARCHAR(200), 
-    causa VARCHAR(100) NOT NULL,
+    descrip VARCHAR(200) NOT NULL, 
+    causa VARCHAR(100),
 
     -- id con exactamante 9 dig (del 0 al 9)
     CONSTRAINT chk_id_formato CHECK (idIncidencia REGEXP '^[0-9]{9}$'),
