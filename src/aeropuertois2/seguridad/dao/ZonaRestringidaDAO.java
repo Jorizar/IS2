@@ -5,30 +5,28 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import aeropuertois2.seguridad.util.ConexionBD;
+import aeropuertois2.comun.config.DatabaseConfig;
+import aeropuertois2.comun.config.DatabaseConnection;
 
 public class ZonaRestringidaDAO {
 
+    private final DatabaseConnection dbConnection;
+
+    public ZonaRestringidaDAO() {
+        this.dbConnection = new DatabaseConnection(DatabaseConfig.load());
+    }
+
     public boolean existeZona(int idZona) {
+        String sql = "SELECT idZonaRestringida FROM ZonaRestringida WHERE idZonaRestringida = ?";
 
-        Connection conn = null;
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        try {
-            conn = ConexionBD.getConexion();
-
-            String sql = "SELECT idZonaRestringida FROM ZonaRestringida WHERE idZonaRestringida=?";
-
-            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, idZona);
 
-            ResultSet rs = ps.executeQuery();
-
-            boolean existe = rs.next();
-
-            rs.close();
-            ps.close();
-
-            return existe;
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
 
         } catch (SQLException e) {
             System.out.println("Error verificar zona: " + e.getMessage());

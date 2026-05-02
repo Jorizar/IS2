@@ -4,6 +4,7 @@ import aeropuertois2.personal.presentacion.PersonalMenu;
 import aeropuertois2.finanzas.presentacion.FinanzasMenu;
 import aeropuertois2.incidencia.presentacion.IncidenciaMenu;
 import aeropuertois2.vuelo.presentacion.VueloMenu;
+import aeropuertois2.seguridad.vista.CrearAccesoView;
 import aeropuertois2.operaciones.presentacion.OperacionesMenu;
 
 import java.util.Scanner;
@@ -42,7 +43,9 @@ public class InicioController {
 			}
 			case "6" -> 
 			{
-				System.out.println("Módulo Seguridad no implementado todavía.");
+				  CrearAccesoView view = new CrearAccesoView();
+			      view.mostrarFormulario();
+
 				return true;
 			}
 			case "7" -> 

@@ -1,25 +1,29 @@
 package aeropuertois2.seguridad.dao;
 
-
 import java.sql.Connection;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
+import aeropuertois2.comun.config.DatabaseConfig;
+import aeropuertois2.comun.config.DatabaseConnection;
 import aeropuertois2.seguridad.modelo.PermisoAcceso;
-import aeropuertois2.seguridad.util.ConexionBD;
 
 public class PermisoDAO {
 
-    public boolean insertarPermiso(PermisoAcceso p) {
+    private final DatabaseConnection dbConnection;
 
+    public PermisoDAO() {
+        this.dbConnection = new DatabaseConnection(DatabaseConfig.load());
+    }
+
+    public boolean insertarPermiso(PermisoAcceso p) {
         String sql = "INSERT INTO PermisoAcceso " +
                 "(fechaInicio, fechaFin, estado, Usuario_idUsuario, ZonaRestringida_idZonaRestringida) " +
                 "VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection conn = ConexionBD.getConexion();
+        try (Connection conn = dbConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setDate(1, new java.sql.Date(p.getFechaInicio().getTime()));
@@ -38,15 +42,14 @@ public class PermisoDAO {
     }
 
     public boolean existePermiso(int idUsuario, int idZona, Date inicio, Date fin) {
-
         String sql = "SELECT 1 FROM PermisoAcceso " +
                 "WHERE Usuario_idUsuario = ? " +
                 "AND ZonaRestringida_idZonaRestringida = ? " +
                 "AND estado = 'Activo' " +
                 "AND fechaFin >= CURDATE() " +
                 "AND fechaInicio <= ? AND fechaFin >= ?";
-        
-        try (Connection conn = ConexionBD.getConexion();
+
+        try (Connection conn = dbConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, idUsuario);
