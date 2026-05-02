@@ -203,4 +203,69 @@ VALUES
 ('2025-01-10', '2025-04-10', 'Revocado', 45678901, 13),
 ('2026-05-01', '2026-11-01', 'Activo',   56789012, 14);
 
+/*-------------------------------------------------
+	OPERACIONES (Terminales y Puertas)
+-------------------------------------------------*/
+CREATE TABLE terminales (
+    id_terminal INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    CONSTRAINT chk_nombre_terminal CHECK (nombre REGEXP '^T[1-9]$')
+) ENGINE=InnoDB;
 
+CREATE TABLE puertas (
+    id_puerta INT AUTO_INCREMENT PRIMARY KEY,
+    numero_gate VARCHAR(10) NOT NULL,
+    id_terminal INT NOT NULL,
+    zona ENUM('Norte', 'Sur', 'Este', 'Oeste') NOT NULL,
+    bloqueada BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT chk_numero_gate CHECK (numero_gate REGEXP '^[A-Z][0-9]{1,2}$'),
+    CONSTRAINT uq_gate_terminal UNIQUE (numero_gate, id_terminal),
+    FOREIGN KEY (id_terminal) REFERENCES terminales(id_terminal) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+INSERT INTO terminales (nombre) VALUES ('T1'), ('T2'), ('T3'), ('T4');
+INSERT INTO puertas (numero_gate, id_terminal, zona, bloqueada) VALUES
+('A1', 1, 'Norte', FALSE),
+('C1', 2, 'Este', FALSE),
+('E1', 4, 'Norte', FALSE);
+
+/*-------------------------------------------------
+	VUELOS (Versión detallada del colega)
+-------------------------------------------------*/
+CREATE TABLE vuelos (
+    id_vuelo VARCHAR(20) PRIMARY KEY,
+    origen VARCHAR(100) NOT NULL,
+    destino VARCHAR(100) NOT NULL,
+    aerolinea VARCHAR(100) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    id_operador_creador VARCHAR(50) NOT NULL,
+    id_operador_ultimo_modificador VARCHAR(50) NOT NULL,
+    fecha_ultima_modificacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_origen_destino CHECK (origen <> destino)
+) ENGINE=InnoDB;
+
+INSERT INTO vuelos (id_vuelo, origen, destino, aerolinea, id_operador_creador, id_operador_ultimo_modificador) VALUES
+('IB1001', 'Madrid', 'Barcelona', 'Iberia', '48201151M', '48201151M'),
+('IB1002', 'Madrid', 'París', 'Iberia', '48201151M', '48201151M'),
+('UX2001', 'Madrid', 'Palma de Mallorca', 'Air Europa', '34567890P', '34567890P'),
+('UX2005', 'Madrid', 'Nueva York', 'Air Europa', '34567890P', '34567890P');
+
+/*-------------------------------------------------
+	VIAJES (Tu parte, vinculada a Vuelos y Puertas)
+-------------------------------------------------*/
+CREATE TABLE viajes (
+    id_viaje VARCHAR(20) PRIMARY KEY,
+    fecha_salida DATE NOT NULL,
+    hora_salida TIME NOT NULL,
+    fecha_llegada DATE NOT NULL,
+    hora_llegada TIME NOT NULL,
+    id_vuelo VARCHAR(20) NOT NULL,
+    id_puerta INT NULL,
+    estado ENUM('Programado', 'EnCurso', 'Completado', 'Cancelado') DEFAULT 'Programado',
+    FOREIGN KEY (id_vuelo) REFERENCES vuelos(id_vuelo),
+    FOREIGN KEY (id_puerta) REFERENCES puertas(id_puerta) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+INSERT INTO viajes (id_viaje, fecha_salida, hora_salida, fecha_llegada, hora_llegada, id_vuelo, id_puerta, estado) VALUES
+('VJ-001', '2026-05-01', '10:30:00', '2026-05-01', '12:00:00', 'IB1001', 1, 'Programado'),
+('VJ-002', '2026-05-02', '15:00:00', '2026-05-02', '18:45:00', 'UX2005', 3, 'Programado');
