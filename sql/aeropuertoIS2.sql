@@ -269,3 +269,19 @@ CREATE TABLE viajes (
 INSERT INTO viajes (id_viaje, fecha_salida, hora_salida, fecha_llegada, hora_llegada, id_vuelo, id_puerta, estado) VALUES
 ('VJ-001', '2026-05-01', '10:30:00', '2026-05-01', '12:00:00', 'IB1001', 1, 'Programado'),
 ('VJ-002', '2026-05-02', '15:00:00', '2026-05-02', '18:45:00', 'UX2005', 3, 'Programado');
+
+/*-------------------------------------------------
+	PANELES (Avisos)
+-------------------------------------------------*/
+
+CREATE TABLE avisos  (
+	idAviso CHAR(9) PRIMARY KEY,
+	fecha DATETIME NOT NULL,
+	mensaje VARCHAR(200)
+);
+
+INSERT INTO avisos(idAviso, fecha, mensaje) VALUES
+('100000003', '2026-04-20 14:45:00', 'Cinta de recogida de equipajes número 4 atascada.'),
+('100000007', '2026-04-21 12:05:00', 'Puerta automática de acceso principal bloqueada a la mitad.'),
+('100000009', '2026-04-21 15:30:00', 'Se produce un retraso en el vuelo UX9043.'),
+('100000010', '2026-04-21 16:45:00', 'Tripulación del vuelo IB3442 llega tarde al embarque por atasco.');
