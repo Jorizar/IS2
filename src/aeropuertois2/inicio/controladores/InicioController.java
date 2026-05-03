@@ -6,6 +6,7 @@ import aeropuertois2.incidencia.presentacion.IncidenciaMenu;
 import aeropuertois2.vuelo.presentacion.VueloMenu;
 import aeropuertois2.seguridad.vista.CrearAccesoView;
 import aeropuertois2.operaciones.presentacion.OperacionesMenu;
+import aeropuertois2.paneles.presentacion.VistaPaneles;
 
 import java.util.Scanner;
 
@@ -38,7 +39,8 @@ public class InicioController {
 			}
 			case "5" -> 
 			{
-				System.out.println("Módulo Paneles no implementado todavía.");
+				VistaPaneles panelMenu = new VistaPaneles();
+				panelMenu.iniciar(scanner);
 				return true;
 			}
 			case "6" -> 
