@@ -230,25 +230,64 @@ INSERT INTO puertas (numero_gate, id_terminal, zona, bloqueada) VALUES
 ('E1', 4, 'Norte', FALSE);
 
 /*-------------------------------------------------
-	VUELOS (Versión detallada del colega)
+	VUELOS
 -------------------------------------------------*/
 CREATE TABLE vuelos (
-    id_vuelo VARCHAR(20) PRIMARY KEY,
-    origen VARCHAR(100) NOT NULL,
-    destino VARCHAR(100) NOT NULL,
-    aerolinea VARCHAR(100) NOT NULL,
-    activo BOOLEAN NOT NULL DEFAULT TRUE,
-    id_operador_creador VARCHAR(50) NOT NULL,
-    id_operador_ultimo_modificador VARCHAR(50) NOT NULL,
-    fecha_ultima_modificacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_origen_destino CHECK (origen <> destino)
+                        id_vuelo VARCHAR(20) PRIMARY KEY,
+                        origen VARCHAR(100) NOT NULL,
+                        destino VARCHAR(100) NOT NULL,
+                        aerolinea VARCHAR(100) NOT NULL,
+                        activo BOOLEAN NOT NULL DEFAULT TRUE,
+                        id_operador_creador VARCHAR(50) NOT NULL,
+                        id_operador_ultimo_modificador VARCHAR(50) NOT NULL,
+                        fecha_ultima_modificacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        CONSTRAINT chk_origen_destino CHECK (origen <> destino)
 ) ENGINE=InnoDB;
 
-INSERT INTO vuelos (id_vuelo, origen, destino, aerolinea, id_operador_creador, id_operador_ultimo_modificador) VALUES
-('IB1001', 'Madrid', 'Barcelona', 'Iberia', '48201151M', '48201151M'),
-('IB1002', 'Madrid', 'París', 'Iberia', '48201151M', '48201151M'),
-('UX2001', 'Madrid', 'Palma de Mallorca', 'Air Europa', '34567890P', '34567890P'),
-('UX2005', 'Madrid', 'Nueva York', 'Air Europa', '34567890P', '34567890P');
+INSERT INTO vuelos (id_vuelo, origen, destino, aerolinea, activo, id_operador_creador, id_operador_ultimo_modificador, fecha_ultima_modificacion) VALUES
+('IB1001', 'Madrid', 'Barcelona', 'Iberia', TRUE, 'operador1', 'operador1', CURRENT_TIMESTAMP),
+('IB1002', 'Madrid', 'París', 'Iberia', TRUE, 'operador1', 'operador1', CURRENT_TIMESTAMP),
+('IB1003', 'Madrid', 'Roma', 'Iberia', TRUE, 'operador2', 'operador2', CURRENT_TIMESTAMP),
+('IB1004', 'Madrid', 'Londres', 'Iberia', TRUE, 'operador2', 'operador2', CURRENT_TIMESTAMP),
+('IB1005', 'Madrid', 'Sevilla', 'Iberia', TRUE, 'operador3', 'operador3', CURRENT_TIMESTAMP),
+
+('UX2001', 'Madrid', 'Palma de Mallorca', 'Air Europa', TRUE, 'operador1', 'operador1', CURRENT_TIMESTAMP),
+('UX2002', 'Madrid', 'Lisboa', 'Air Europa', TRUE, 'operador2', 'operador2', CURRENT_TIMESTAMP),
+('UX2003', 'Madrid', 'Valencia', 'Air Europa', TRUE, 'operador3', 'operador3', CURRENT_TIMESTAMP),
+('UX2004', 'Madrid', 'Ámsterdam', 'Air Europa', TRUE, 'operador1', 'operador1', CURRENT_TIMESTAMP),
+('UX2005', 'Madrid', 'Nueva York', 'Air Europa', TRUE, 'operador2', 'operador2', CURRENT_TIMESTAMP);
+
+/*-------------------------------------------------
+	CALENDARIO
+-------------------------------------------------*/
+CREATE TABLE calendarios
+(
+    calendario_id INT AUTO_INCREMENT PRIMARY KEY,
+    vuelo_id     VARCHAR(20) NOT NULL,
+    fecha_inicio DATE        NOT NULL,
+    fecha_fin    DATE        NOT NULL,
+    hora_salida  TIME        NOT NULL,
+    hora_llegada TIME        NOT NULL,
+    dias 		 CHAR(7)	 NOT NULL,
+
+    CONSTRAINT fk_calendarios_vuelo
+        FOREIGN KEY (vuelo_id)
+            REFERENCES vuelos (id_vuelo)
+);
+
+INSERT INTO calendarios
+(vuelo_id, fecha_inicio, fecha_fin, hora_salida, hora_llegada, dias) VALUES
+('IB1001', '2026-05-01', '2026-10-31', '08:00:00', '09:15:00', 'LMXJVSD'),
+('IB1002', '2026-05-01', '2026-10-31', '10:30:00', '12:25:00', 'LMXJV__'),
+('IB1003', '2026-05-01', '2026-10-31', '13:00:00', '15:25:00', 'L_XJ__D'),
+('IB1004', '2026-05-01', '2026-10-31', '16:45:00', '18:10:00', '_M_JV__'),
+('IB1005', '2026-05-01', '2026-10-31', '19:30:00', '20:40:00', 'LMX_V_D'),
+
+('UX2001', '2026-05-01', '2026-10-31', '07:15:00', '08:45:00', 'LMXJVSD'),
+('UX2002', '2026-05-01', '2026-10-31', '09:40:00', '10:55:00', 'LMXJV__'),
+('UX2003', '2026-05-01', '2026-10-31', '12:20:00', '13:15:00', '_MXJVS_'),
+('UX2004', '2026-05-01', '2026-10-31', '15:10:00', '17:45:00', 'L_XJ__D'),
+('UX2005', '2026-05-01', '2026-10-31', '18:00:00', '02:00:00', '__X_V_D');
 
 /*-------------------------------------------------
 	VIAJES (Tu parte, vinculada a Vuelos y Puertas)
