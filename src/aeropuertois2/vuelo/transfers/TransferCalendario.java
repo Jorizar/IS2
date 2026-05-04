@@ -1,11 +1,14 @@
 
+
+
 package aeropuertois2.vuelo.transfers;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
- * Patrón DTO Transporta datos calendarios entre capas
+ * Patrón DTO
+  * Transporta datos calendarios entre capas
  */
 
 public class TransferCalendario {
@@ -14,13 +17,16 @@ public class TransferCalendario {
 	private LocalTime horaSalida;
 	private LocalTime horaLlegada;
 	private String vueloId;
+	private String dias;
 
-	public TransferCalendario(LocalDate inicio, LocalDate fin, LocalTime salida, LocalTime llegada, String vueloId) {
+	public TransferCalendario(LocalDate inicio, LocalDate fin,
+	                          LocalTime salida, LocalTime llegada, String vueloId, String dias) {
 		this.fechaInicio = inicio;
 		this.fechaFin = fin;
 		this.horaSalida = salida;
 		this.horaLlegada = llegada;
 		this.vueloId = vueloId;
+		this.dias = dias;
 	}
 
 	public LocalDate getFechaInicio() {
@@ -41,5 +47,9 @@ public class TransferCalendario {
 
 	public String getVueloId() {
 		return vueloId;
+	}
+
+	public String getDias() {
+		return dias;
 	}
 }

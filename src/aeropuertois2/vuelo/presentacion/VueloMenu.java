@@ -1,6 +1,7 @@
 package aeropuertois2.vuelo.presentacion;
 
 import aeropuertois2.comun.excepciones.ValidationException;
+import aeropuertois2.personal.presentacion.ConsolePrinter;
 import aeropuertois2.vuelo.controladores.VueloController;
 import aeropuertois2.vuelo.transfers.TransferCalendario;
 import aeropuertois2.vuelo.transfers.TransferVuelo;
@@ -15,125 +16,200 @@ import java.util.Scanner;
 
 public class VueloMenu {
 
-	private final VueloController vueloController = new VueloController();
+    private final VueloController vueloController;
 
-	public void iniciar(Scanner scanner) {
+    public VueloMenu() {
+        vueloController = new VueloController();
+    }
 
-		try {
-			printTitulo("Gestión de Vuelos");
+    public void iniciar(Scanner scanner) {
+        //ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
+        //ejecutarCrearIncidencia(scanner);
 
-			// ---------------- 1. ID VÁLIDO PRIMERO ----------------
-			String idVuelo = pedirIdValido(scanner);
 
-			// ---------------- 2. DATOS VUELO ----------------
-			String origen = pedirTexto(scanner, "Origen: ");
-			String destino = pedirTexto(scanner, "Destino: ");
-			String aerolinea = pedirTexto(scanner, "Aerolínea: ");
+        boolean salir = false;
+        while (!salir) {
+            ConsolePrinter.printTitulo("Gestion de Vuelos");
+            System.out.println("1. Crear nuevo vuelo");
+            System.out.println("2. Mostrar todas los vuelos");
+            System.out.println("3. Volver al menú principal");
+            System.out.print("Seleccione una opción: ");
 
-			TransferVuelo vuelo = new TransferVuelo(idVuelo, origen, destino, aerolinea);
+            String opcion = scanner.nextLine();
 
-			// ---------------- 3. CALENDARIOS ----------------
-			List<TransferCalendario> calendarios = pedirCalendarios(scanner, idVuelo);
+            switch (opcion) {
+                case "1" -> ejecutarCrearVuelo(scanner);
+                case "2" -> ejecutarMostrarVuelos();
+                case "3" -> salir = true;
+                default -> System.out.println("Opción no válida.");
+            }
+        }
 
-			// ---------------- 4. CREAR ----------------
-			boolean creado = vueloController.crearVuelo(vuelo, calendarios, "operador");
+    }
 
-			System.out.println(creado ? "Vuelo creado correctamente." : "No se pudo crear el vuelo.");
+    private void ejecutarMostrarVuelos() {
+        try {
+            List<TransferVuelo> vuelos = vueloController.mostrarVuelos();
 
-		} catch (ValidationException e) {
-			System.out.println("Error de validación: " + e.getMessage());
-		} catch (SQLException e) {
-			System.out.println("Error de base de datos: " + e.getMessage());
-		}
-	}
+            System.out.println("--------------------------- VUELOS ---------------------------");
+            System.out.printf("%-10s %-20s %-20s %-15s%n",
+                    "ID", "ORIGEN", "DESTINO", "AEROLINEA");
 
-	// ---------------- ID VALIDADO ----------------
+            for (TransferVuelo vuelo : vuelos) {
+                System.out.printf("%-10s %-20s %-20s %-15s%n",
+                        vuelo.getIdVuelo(),
+                        vuelo.getOrigen(),
+                        vuelo.getDestino(),
+                        vuelo.getAerolinea());
+            }
 
-	private String pedirIdValido(Scanner scanner) {
+        } catch (SQLException e) {
+            System.out.println("Error de base de datos: " + e.getMessage());
+        }
+    }
 
-		while (true) {
+    public void ejecutarCrearVuelo(Scanner scanner) {
 
-			System.out.print("ID vuelo: ");
-			String id = scanner.nextLine().trim();
+        try {
+            // 1. Pedir datos completos del vuelo
+            TransferVuelo vuelo = pedirVueloValido(scanner);
 
-			if (id.isBlank()) {
-				System.out.println("El ID no puede estar vacío.");
-				continue;
-			}
+            // 2. Pedir calendarios
+            List<TransferCalendario> calendarios =
+                    pedirCalendarios(scanner, vuelo.getIdVuelo());
 
-			try {
-				if (vueloController.existeVuelo(id)) {
-					System.out.println("El ID ya existe. Introduce otro.");
-					continue;
-				}
-			} catch (SQLException e) {
-				System.out.println("Error comprobando el ID.");
-				continue;
-			}
+            // 3. Crear vuelo
+            boolean creado = vueloController.crearVuelo(
+                    vuelo,
+                    calendarios,
+                    "operador"
+            );
 
-			return id; // SOLO SALE SI ES VÁLIDO
-		}
-	}
+            System.out.println(creado
+                    ? "Vuelo creado correctamente."
+                    : "No se pudo crear el vuelo.");
 
-	// ---------------- INPUT SIMPLE ----------------
+        } catch (ValidationException e) {
+            System.out.println("Error de validación: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Error de base de datos: " + e.getMessage());
+        }
+    }
 
-	private String pedirTexto(Scanner scanner, String msg) {
-		System.out.print(msg);
-		return scanner.nextLine().trim();
-	}
+    // ---------------- VUELO COMPLETO VALIDADO ----------------
 
-	// ---------------- CALENDARIOS ----------------
+    private TransferVuelo pedirVueloValido(Scanner scanner) {
 
-	private List<TransferCalendario> pedirCalendarios(Scanner scanner, String idVuelo) {
+        while (true) {
 
-		List<TransferCalendario> calendarios = new ArrayList<>();
+            System.out.println("\n--- Datos del vuelo ---");
 
-		boolean continuar = true;
+            String idVuelo = pedirTexto(scanner, "ID vuelo: ");
+            String origen = pedirTexto(scanner, "Origen: ");
+            String destino = pedirTexto(scanner, "Destino: ");
+            String aerolinea = pedirTexto(scanner, "Aerolínea: ");
 
-		while (continuar) {
+            try {
+                if (vueloController.existeVuelo(idVuelo)) {
+                    System.out.println("Ya existe un vuelo con ese ID. Introduce los datos del vuelo nuevamente.");
+                    continue;
+                }
 
-			System.out.println("\n--- Nuevo calendario ---");
+                return new TransferVuelo(idVuelo, origen, destino, aerolinea);
 
-			LocalDate inicio = pedirFecha(scanner, "Fecha inicio (YYYY-MM-DD): ");
-			LocalDate fin = pedirFecha(scanner, "Fecha fin (YYYY-MM-DD): ");
-			LocalTime salida = pedirHora(scanner, "Hora salida (HH:MM): ");
-			LocalTime llegada = pedirHora(scanner, "Hora llegada (HH:MM): ");
+            } catch (SQLException e) {
+                System.out.println("Error comprobando si existe el vuelo. Inténtalo de nuevo.");
+            }
+        }
+    }
 
-			calendarios.add(new TransferCalendario(inicio, fin, salida, llegada, idVuelo));
+    // ---------------- INPUT SIMPLE ----------------
 
-			System.out.print("¿Añadir otro calendario? (s/n): ");
-			continuar = scanner.nextLine().trim().equalsIgnoreCase("s");
-		}
+    private String pedirTexto(Scanner scanner, String msg) {
+        while (true) {
+            System.out.print(msg);
+            String texto = scanner.nextLine().trim();
 
-		return calendarios;
-	}
+            if (!texto.isBlank()) {
+                return texto;
+            }
 
-	private LocalDate pedirFecha(Scanner scanner, String msg) {
-		while (true) {
-			try {
-				System.out.print(msg);
-				return LocalDate.parse(scanner.nextLine());
-			} catch (DateTimeParseException e) {
-				System.out.println("Formato incorrecto (YYYY-MM-DD)");
-			}
-		}
-	}
+            System.out.println("Este campo no puede estar vacío.");
+        }
+    }
 
-	private LocalTime pedirHora(Scanner scanner, String msg) {
-		while (true) {
-			try {
-				System.out.print(msg);
-				return LocalTime.parse(scanner.nextLine());
-			} catch (DateTimeParseException e) {
-				System.out.println("Formato incorrecto (HH:MM)");
-			}
-		}
-	}
+    // ---------------- CALENDARIOS ----------------
 
-	private static void printTitulo(String titulo) {
-		System.out.println();
-		System.out.println("==============================================================");
-		System.out.println(titulo);
-		System.out.println("==============================================================");
-	}
+    private List<TransferCalendario> pedirCalendarios(Scanner scanner, String idVuelo) {
+
+        List<TransferCalendario> calendarios = new ArrayList<>();
+        boolean continuar = true;
+
+        while (continuar) {
+
+            System.out.println("\n--- Nuevo calendario ---");
+
+            LocalDate inicio = pedirFecha(scanner, "Fecha inicio (YYYY-MM-DD): ");
+            LocalDate fin = pedirFecha(scanner, "Fecha fin (YYYY-MM-DD): ");
+            LocalTime salida = pedirHora(scanner, "Hora salida (HH:MM): ");
+            LocalTime llegada = pedirHora(scanner, "Hora llegada (HH:MM): ");
+            String dias = pedirDias(scanner, "Dias de la semana(L_X__SD): ");
+            calendarios.add(new TransferCalendario(
+                    inicio,
+                    fin,
+                    salida,
+                    llegada,
+                    idVuelo,
+                    dias
+            ));
+
+            System.out.print("¿Añadir otro calendario? (s/n): ");
+            continuar = scanner.nextLine().trim().equalsIgnoreCase("s");
+        }
+
+        return calendarios;
+    }
+
+    private String pedirDias(Scanner scanner, String msg) {
+        while (true) {
+            System.out.print(msg);
+            String dias = scanner.nextLine().trim().toUpperCase();
+
+            if (dias.matches("[L_][M_][X_][J_][V_][S_][D_]") && !dias.equals("_______")) {
+                return dias;
+            }
+
+            System.out.println("Formato incorrecto. Usa 7 caracteres: LMXJVSD o _.");
+            System.out.println("Ejemplos: LMXJV__, L_XJ_SD, _____SD");
+        }
+    }
+
+    private LocalDate pedirFecha(Scanner scanner, String msg) {
+        while (true) {
+            try {
+                System.out.print(msg);
+                return LocalDate.parse(scanner.nextLine().trim());
+            } catch (DateTimeParseException e) {
+                System.out.println("Formato incorrecto. Usa YYYY-MM-DD.");
+            }
+        }
+    }
+
+    private LocalTime pedirHora(Scanner scanner, String msg) {
+        while (true) {
+            try {
+                System.out.print(msg);
+                return LocalTime.parse(scanner.nextLine().trim());
+            } catch (DateTimeParseException e) {
+                System.out.println("Formato incorrecto. Usa HH:MM.");
+            }
+        }
+    }
+
+    private static void printTitulo(String titulo) {
+        System.out.println();
+        System.out.println("==============================================================");
+        System.out.println(titulo);
+        System.out.println("==============================================================");
+    }
 }

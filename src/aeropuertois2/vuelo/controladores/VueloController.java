@@ -1,39 +1,49 @@
 
+
+
 package aeropuertois2.vuelo.controladores;
 
 import aeropuertois2.comun.config.DatabaseConfig;
 import aeropuertois2.comun.config.DatabaseConnection;
 import aeropuertois2.comun.excepciones.ValidationException;
 import aeropuertois2.vuelo.aplicaciones.VueloService;
-import aeropuertois2.vuelo.transfers.TransferCalendario;
-import aeropuertois2.vuelo.transfers.TransferVuelo;
 import aeropuertois2.vuelo.infraestructura.CalendarioDao;
 import aeropuertois2.vuelo.infraestructura.VueloDao;
+import aeropuertois2.vuelo.transfers.TransferCalendario;
+import aeropuertois2.vuelo.transfers.TransferVuelo;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class VueloController {
 
-	private final VueloService vueloService;
+    private final VueloService vueloService;
 
-	public VueloController() {
-		DatabaseConfig config = DatabaseConfig.load();
-		DatabaseConnection databaseConnection = new DatabaseConnection(config);
+    public VueloController() {
 
-		VueloDao vueloDao = new VueloDao(databaseConnection);
-		CalendarioDao calendarioDao = new CalendarioDao(databaseConnection);
+        DatabaseConfig config = DatabaseConfig.load();
+        DatabaseConnection databaseConnection = new DatabaseConnection(config);
 
-		this.vueloService = new VueloService(vueloDao, calendarioDao);
-	}
+        VueloDao vueloDao = new VueloDao(databaseConnection);
+        CalendarioDao calendarioDao = new CalendarioDao(databaseConnection);
 
-	public boolean crearVuelo(TransferVuelo vuelo, List<TransferCalendario> calendarios, String idOperador)
-			throws SQLException, ValidationException {
+        this.vueloService = new VueloService(vueloDao, calendarioDao);
+    }
 
-		return vueloService.crearVuelo(vuelo, calendarios, idOperador);
-	}
+    public boolean crearVuelo(
+            TransferVuelo vuelo,
+            List<TransferCalendario> calendarios,
+            String idOperador)
+            throws SQLException, ValidationException {
 
-	public boolean existeVuelo(String idVuelo) throws SQLException {
-		return vueloService.existeVuelo(idVuelo);
-	}
+        return vueloService.crearVuelo(vuelo, calendarios, idOperador);
+    }
+
+    public boolean existeVuelo(String idVuelo) throws SQLException {
+        return vueloService.existeVuelo(idVuelo);
+    }
+
+    public List<TransferVuelo> mostrarVuelos() throws SQLException {
+        return vueloService.listarVuelos();
+    }
 }
