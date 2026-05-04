@@ -23,8 +23,6 @@ public class VueloMenu {
     }
 
     public void iniciar(Scanner scanner) {
-        //ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
-        //ejecutarCrearIncidencia(scanner);
 
 
         boolean salir = false;
