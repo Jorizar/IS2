@@ -3,8 +3,8 @@ package aeropuertois2.paneles.presentacion;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
-import aeropuertois2.paneles.controladores.ControladorPaneles;
-import aeropuertois2.paneles.dominio.Aviso;
+
+import aeropuertois2.paneles.modelo.Aviso;
 import aeropuertois2.personal.presentacion.ConsolePrinter;
 
 public class VistaPaneles {
