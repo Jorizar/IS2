@@ -6,7 +6,7 @@ USE aeropuertoIS2;
 	EMPLEADOS
 -------------------------------------------------*/
 CREATE TABLE empleados (
-    id CHAR(9) PRIMARY KEY,
+    id VARCHAR(9) PRIMARY KEY,
     password_hash CHAR(64) NOT NULL,
     nombre VARCHAR(30) NOT NULL,
     funcion ENUM('financiero', 'incidencias', 'operaciones', 'paneles', 'personal', 'seguridad', 'vuelos') NOT NULL,
@@ -100,14 +100,14 @@ CREATE TABLE IF NOT EXISTS registros_contables (
     -- Solo se pueden registrar estos 3 tipos de operaciones
     CONSTRAINT chk_tipo_operacion CHECK (tipo_operacion IN ('INGRESO', 'EGRESO', 'TRANSFERENCIA')),
     -- No se pueden registrar montos negativos
-    CONSTRAINT chk_monto_positivo CHECK (monto > 0)
+    CONSTRAINT chk_monto_positivo CHECK (monto > 0),
     
-    FOREIGN KEY (cuenta_contable) REFERENCES cuentas_bancarias(iban),
+    FOREIGN KEY (cuenta_contable) REFERENCES cuentas_bancarias(iban)
 );
 
 CREATE TABLE IF NOT EXISTS nominas (
     id_nomina VARCHAR(20) PRIMARY KEY,
-    id_empleado VARCHAR(50) NOT NULL,
+    id_empleado VARCHAR(9) NOT NULL,
     iban_cuenta VARCHAR(34) NOT NULL,
     bruto DECIMAL(10, 2) NOT NULL,
     neto DECIMAL(10, 2) NOT NULL,
@@ -119,9 +119,9 @@ CREATE TABLE IF NOT EXISTS nominas (
     -- Lógica de negocio dura: El bruto siempre debe ser mayor al neto
     CONSTRAINT chk_importes_coherentes CHECK (bruto > neto AND neto > 0),
     -- Bloqueamos los estados
-    CONSTRAINT chk_estado_nomina CHECK (estado IN ('PENDIENTE', 'PAGADA'))
+    CONSTRAINT chk_estado_nomina CHECK (estado IN ('PENDIENTE', 'PAGADA')),
     
-    FOREIGN KEY (id_empleado) REFERENCES empleados(id_empleado) ON DELETE RESTRICT,
+    FOREIGN KEY (id_empleado) REFERENCES empleados(id) ON DELETE RESTRICT,
     FOREIGN KEY (iban_cuenta) REFERENCES cuentas_bancarias(iban) ON DELETE RESTRICT
 );
 
@@ -137,9 +137,9 @@ INSERT INTO registros_contables (id_registro, cuenta_contable, concepto, tipo_op
 ('REG-M4N5P6', 'ES9876543210987654321098', 'Traspaso a fondo de emergencias', 'TRANSFERENCIA', 50000.00, 1);
 
 INSERT INTO nominas (id_nomina, id_empleado, iban_cuenta, bruto, neto, fecha_emision, estado) VALUES
-('NOM-111AA', 'EMP-001', 'ES1234567890123456789012', 3500.00, 2800.00, '2024-05-01', 'PAGADA'),
-('NOM-222BB', 'EMP-045', 'ES1234567890123456789012', 2800.00, 2240.00, '2024-05-01', 'PAGADA'),
-('NOM-333CC', 'EMP-089', 'ES9876543210987654321098', 4200.00, 3360.00, '2024-05-01', 'PAGADA');
+('NOM-111AA', '48201151M', 'ES1234567890123456789012', 3500.00, 2800.00, '2024-05-01', 'PAGADA'),
+('NOM-222BB', '12345678Z', 'ES1234567890123456789012', 2800.00, 2240.00, '2024-05-01', 'PAGADA'),
+('NOM-333CC', '23456789H', 'ES9876543210987654321098', 4200.00, 3360.00, '2024-05-01', 'PAGADA');
 
 -- =========================
 -- SUBSISTEMA SEGURIDAD
