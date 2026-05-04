@@ -43,10 +43,10 @@ public class Incidencia {
 	public String getCausa() {
 		return causa;
 	}
-	
+
 	@Override
-    public String toString() {
-        return String.format("[%s] ---- Tipo: %s | Estado: %s | Desc: %s | Causa: %s", 
-                idIncidencia, tipo, estado, descrip, causa);
-    }
+	public String toString() {
+		return String.format("[%s] ---- Tipo: %s | Estado: %s | Desc: %s | Causa: %s", idIncidencia, tipo, estado,
+				descrip, causa);
+	}
 }

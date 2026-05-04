@@ -11,32 +11,32 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class GestionPuertasService {
-    
-    private final TerminalDAO terminalDAO;
-    private final PuertaDAO puertaDAO;
 
-    public GestionPuertasService(DatabaseConnection conexion) {
-        this.terminalDAO = new TerminalDAO(conexion);
-        this.puertaDAO = new PuertaDAO(conexion);
-    }
+	private final TerminalDAO terminalDAO;
+	private final PuertaDAO puertaDAO;
 
-    public List<Terminal> obtenerTodasLasTerminales() throws SQLException {
-        return terminalDAO.obtenerTodas();
-    }
+	public GestionPuertasService(DatabaseConnection conexion) {
+		this.terminalDAO = new TerminalDAO(conexion);
+		this.puertaDAO = new PuertaDAO(conexion);
+	}
 
-    public List<Puerta> obtenerPuertas(int idTerminal, ZonaTerminal zona) throws SQLException {
-        return puertaDAO.obtenerPorTerminalYZona(idTerminal, zona);
-    }
+	public List<Terminal> obtenerTodasLasTerminales() throws SQLException {
+		return terminalDAO.obtenerTodas();
+	}
 
-    public boolean comprobarSiTieneAvion(int idPuerta) throws SQLException {
-        return puertaDAO.tieneAvionAsignado(idPuerta);
-    }
-    
-    public boolean registrarNuevaPuerta(Puerta puerta) throws SQLException {
-        return puertaDAO.crear(puerta);
-    }
-    
-    public boolean borrarPuerta(int idPuerta) throws SQLException {
-        return puertaDAO.eliminar(idPuerta);
-    }
+	public List<Puerta> obtenerPuertas(int idTerminal, ZonaTerminal zona) throws SQLException {
+		return puertaDAO.obtenerPorTerminalYZona(idTerminal, zona);
+	}
+
+	public boolean comprobarSiTieneAvion(int idPuerta) throws SQLException {
+		return puertaDAO.tieneAvionAsignado(idPuerta);
+	}
+
+	public boolean registrarNuevaPuerta(Puerta puerta) throws SQLException {
+		return puertaDAO.crear(puerta);
+	}
+
+	public boolean borrarPuerta(int idPuerta) throws SQLException {
+		return puertaDAO.eliminar(idPuerta);
+	}
 }

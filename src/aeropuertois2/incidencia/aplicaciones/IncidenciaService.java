@@ -4,23 +4,27 @@ import aeropuertois2.comun.excepciones.ValidationException;
 import aeropuertois2.incidencia.dominio.Incidencia;
 import aeropuertois2.incidencia.dominio.tipoIncidencia;
 import aeropuertois2.incidencia.infrastructura.IncidenciaDAO;
+import aeropuertois2.paneles.negocio.ServicioPaneles;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class IncidenciaService {
 	private static IncidenciaService instancia; // unica instancia (singleton)
 	private final IncidenciaDAO incidenciaDao;
+	private ServicioPaneles paneles;
 
 	// constructor privado (singleton)
-	private IncidenciaService(IncidenciaDAO incidenciaDao) {
+	private IncidenciaService(IncidenciaDAO incidenciaDao, ServicioPaneles paneles) {
 		this.incidenciaDao = incidenciaDao;
+		this.paneles = paneles;
 	}
 
 	// metodo para obtener la instancia unica
-	public static IncidenciaService getInstance(IncidenciaDAO incidenciaDao) {
+	public static IncidenciaService getInstance(IncidenciaDAO incidenciaDao, ServicioPaneles paneles) {
 		if (instancia == null)
-			instancia = new IncidenciaService(incidenciaDao);
+			instancia = new IncidenciaService(incidenciaDao, paneles);
 
 		return instancia;
 	}
@@ -33,15 +37,15 @@ public class IncidenciaService {
 		incidenciaDao.crearIncidencia(nuevaIncidencia);
 
 		/*
-		 * --- LA INCIDENCIA CREAR EL AVISO EN PANELES ---
-		 * 
-		 * if (tipo == TipoIncidencia.GENERAL) paneles.crearAviso();
+		 * --- LA INCIDENCIA CREA UN NUEVO AVISO EN PANELES SI ES DE TIPO GENERAL ---
 		 */
+		if (tipo == tipoIncidencia.GENERAL)
+			paneles.crearAviso(id, LocalDateTime.now(), descrip);
 
 		System.out.println("Incidencia creada con exito.");
 	}
-	
+
 	public List<Incidencia> mostrarIncidencias() throws SQLException {
-        return incidenciaDao.mostrarIncidencias();
-    }
+		return incidenciaDao.mostrarIncidencias();
+	}
 }
