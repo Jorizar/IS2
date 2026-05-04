@@ -1,12 +1,13 @@
-package aeropuertois2.paneles.controladores;
+package aeropuertois2.paneles.presentacion;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import aeropuertois2.comun.config.DatabaseConfig;
 import aeropuertois2.comun.config.DatabaseConnection;
-import aeropuertois2.paneles.aplicaciones.ServicioPaneles;
-import aeropuertois2.paneles.dominio.Aviso;
 import aeropuertois2.paneles.infraestructura.AvisoDao;
+import aeropuertois2.paneles.modelo.Aviso;
+import aeropuertois2.paneles.negocio.ServicioPaneles;
 
 
 public class ControladorPaneles {
@@ -21,8 +22,8 @@ public class ControladorPaneles {
         this.servicio = new ServicioPaneles(avisoDao);
     }
 
-    public void crearAviso(String mensaje, String tipo, String vuelo) {
-        servicio.crearAviso(mensaje, tipo, vuelo);
+    public void crearAviso(String id, LocalDateTime fecha, String mensaje) {
+        servicio.crearAviso(id, fecha, mensaje);
     }
 
     public List<Aviso> obtenerAvisos() {

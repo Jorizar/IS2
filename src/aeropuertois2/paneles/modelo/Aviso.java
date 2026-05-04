@@ -1,4 +1,4 @@
-package aeropuertois2.paneles.dominio;
+package aeropuertois2.paneles.modelo;
 
 import java.time.*;
 

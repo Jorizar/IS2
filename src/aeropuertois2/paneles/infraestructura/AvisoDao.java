@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import aeropuertois2.comun.config.DatabaseConnection;
-import aeropuertois2.paneles.dominio.Aviso;
+import aeropuertois2.paneles.modelo.Aviso;
 
 public class AvisoDao {
 	

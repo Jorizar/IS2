@@ -1,10 +1,10 @@
-package aeropuertois2.paneles.aplicaciones;
+package aeropuertois2.paneles.negocio;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import aeropuertois2.paneles.dominio.Aviso;
 import aeropuertois2.paneles.infraestructura.AvisoDao;
+import aeropuertois2.paneles.modelo.Aviso;
 
 public class ServicioPaneles {
 
@@ -14,8 +14,8 @@ public class ServicioPaneles {
         this.repositorio = repositorio;
     }
 
-    public void crearAviso(String mensaje, String tipo, String vuelo) {
-        Aviso aviso = new Aviso("0", LocalDateTime.now(), mensaje);
+    public void crearAviso(String id, LocalDateTime fecha, String mensaje) {
+        Aviso aviso = new Aviso(id, fecha, mensaje);
         repositorio.guardar(aviso);
     }
 
