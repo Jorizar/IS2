@@ -15,7 +15,7 @@ public class InicioMenu {
 	public void iniciar() {
 		try (Scanner scanner = new Scanner(System.in)) {
 			boolean continuar = true;
-		
+
 			while (continuar) {
 				mostrarPantallaInicio();
 				System.out.print("Seleccione un departamento: ");

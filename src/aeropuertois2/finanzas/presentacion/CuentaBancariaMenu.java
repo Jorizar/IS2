@@ -12,106 +12,107 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 public class CuentaBancariaMenu {
-    
-    private final CuentaBancariaController ctrl;
 
-    public CuentaBancariaMenu() {
-        this.ctrl = new CuentaBancariaController();
-        
-    }
+	private final CuentaBancariaController ctrl;
 
-    public void iniciar() {
-        Scanner scanner = new Scanner(System.in);
-        boolean salir = false;
-        
-        while (!salir) {
-            System.out.println("\n==============================================================");
-            System.out.println("   Módulo de Finanzas - Gestión de Cuentas Bancarias");
-            System.out.println("==============================================================");
-            System.out.println("1. Dar de alta una nueva Cuenta Bancaria");
-            System.out.println("2. Validar Cuenta Pendiente con Banco");
-            System.out.println("3. Volver al menú principal");
-            System.out.print("Seleccione una opción: ");
+	public CuentaBancariaMenu() {
+		this.ctrl = new CuentaBancariaController();
 
-            String opcion = scanner.nextLine();
+	}
 
-            switch (opcion) {
-                case "1":
-                    ejecutarCrearCuenta(scanner);
-                    break;
-                case "2":
-                    ejecutarValidarCuenta(scanner);
-                    break;
-                case "3":
-                    salir = true;
-                    break;
-                default:
-                    System.out.println("Opción no válida. Inténtelo de nuevo.");
-            }
-        }
-    }
+	public void iniciar() {
+		Scanner scanner = new Scanner(System.in);
+		boolean salir = false;
 
-    private void ejecutarCrearCuenta(Scanner scanner) {
-        System.out.println("\n--- ALTA DE CUENTA BANCARIA ---");
-        try {
-            System.out.print("Introduzca IBAN (Ej. ES12...): ");
-            String iban = scanner.nextLine();
+		while (!salir) {
+			System.out.println("\n==============================================================");
+			System.out.println("   Módulo de Finanzas - Gestión de Cuentas Bancarias");
+			System.out.println("==============================================================");
+			System.out.println("1. Dar de alta una nueva Cuenta Bancaria");
+			System.out.println("2. Validar Cuenta Pendiente con Banco");
+			System.out.println("3. Volver al menú principal");
+			System.out.print("Seleccione una opción: ");
 
-            System.out.print("Introduzca Nombre del Banco: ");
-            String banco = scanner.nextLine();
+			String opcion = scanner.nextLine();
 
-            System.out.print("Introduzca Sucursal: ");
-            String sucursal = scanner.nextLine();
+			switch (opcion) {
+			case "1":
+				ejecutarCrearCuenta(scanner);
+				break;
+			case "2":
+				ejecutarValidarCuenta(scanner);
+				break;
+			case "3":
+				salir = true;
+				break;
+			default:
+				System.out.println("Opción no válida. Inténtelo de nuevo.");
+			}
+		}
+	}
 
-            System.out.print("Introduzca Tipo de Cuenta (ej. Corriente): ");
-            String tipo = scanner.nextLine();
+	private void ejecutarCrearCuenta(Scanner scanner) {
+		System.out.println("\n--- ALTA DE CUENTA BANCARIA ---");
+		try {
+			System.out.print("Introduzca IBAN (Ej. ES12...): ");
+			String iban = scanner.nextLine();
 
-            System.out.print("Introduzca Moneda (ej. EUR): ");
-            String moneda = scanner.nextLine();
+			System.out.print("Introduzca Nombre del Banco: ");
+			String banco = scanner.nextLine();
 
-            System.out.print("Introduzca Saldo Inicial: ");
-            double saldo = Double.parseDouble(scanner.nextLine());
+			System.out.print("Introduzca Sucursal: ");
+			String sucursal = scanner.nextLine();
 
-            ctrl.crearCuenta(iban, banco, sucursal, tipo, moneda, saldo);
-            System.out.println("\n[ÉXITO] La cuenta se ha guardado en la base de datos (Estado: PENDIENTE).");
+			System.out.print("Introduzca Tipo de Cuenta (ej. Corriente): ");
+			String tipo = scanner.nextLine();
 
-        } catch (NumberFormatException e) {
-            System.out.println("\n[ERROR FORMATO] El saldo debe ser un número válido.");
-        } catch (ValidationException e) {
-            System.out.println("\n[ERROR DE VALIDACIÓN] " + e.getMessage());
-        } catch (SQLException e) {
-            System.out.println("\n[ERROR DE BASE DE DATOS] " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("\n[ERROR INESPERADO] " + e.getMessage());
-        }
-    }
+			System.out.print("Introduzca Moneda (ej. EUR): ");
+			String moneda = scanner.nextLine();
 
-    private void ejecutarValidarCuenta(Scanner scanner) {
-        System.out.println("\n--- VALIDACIÓN BANCARIA DE CUENTA PENDIENTE ---");
-        try {
-            System.out.print("Introduzca el IBAN a validar: ");
-            String iban = scanner.nextLine();
+			System.out.print("Introduzca Saldo Inicial: ");
+			double saldo = Double.parseDouble(scanner.nextLine());
 
-            System.out.print("Usuario del Gestor del Banco: ");
-            String usr = scanner.nextLine();
+			ctrl.crearCuenta(iban, banco, sucursal, tipo, moneda, saldo);
+			System.out.println("\n[ÉXITO] La cuenta se ha guardado en la base de datos (Estado: PENDIENTE).");
 
-            System.out.print("Contraseña del Banco: ");
-            String pass = scanner.nextLine();
+		} catch (NumberFormatException e) {
+			System.out.println("\n[ERROR FORMATO] El saldo debe ser un número válido.");
+		} catch (ValidationException e) {
+			System.out.println("\n[ERROR DE VALIDACIÓN] " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("\n[ERROR DE BASE DE DATOS] " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println("\n[ERROR INESPERADO] " + e.getMessage());
+		}
+	}
 
-            boolean exito = ctrl.validarCuentaConBanco(iban, usr, pass);
+	private void ejecutarValidarCuenta(Scanner scanner) {
+		System.out.println("\n--- VALIDACIÓN BANCARIA DE CUENTA PENDIENTE ---");
+		try {
+			System.out.print("Introduzca el IBAN a validar: ");
+			String iban = scanner.nextLine();
 
-            if (exito) {
-                System.out.println("\n[ÉXITO] ¡Cuenta validada correctamente con el banco! Estado actualizado a VALIDADA.");
-            } else {
-                System.out.println("\n[AVISO] Credenciales incorrectas. La cuenta sigue en estado PENDIENTE.");
-            }
+			System.out.print("Usuario del Gestor del Banco: ");
+			String usr = scanner.nextLine();
 
-        } catch (ValidationException e) {
-            System.out.println("\n[ERROR DE VALIDACIÓN] " + e.getMessage());
-        } catch (SQLException e) {
-            System.out.println("\n[ERROR DE BASE DE DATOS] " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("\n[ERROR INESPERADO] " + e.getMessage());
-        }
-    }
+			System.out.print("Contraseña del Banco: ");
+			String pass = scanner.nextLine();
+
+			boolean exito = ctrl.validarCuentaConBanco(iban, usr, pass);
+
+			if (exito) {
+				System.out.println(
+						"\n[ÉXITO] ¡Cuenta validada correctamente con el banco! Estado actualizado a VALIDADA.");
+			} else {
+				System.out.println("\n[AVISO] Credenciales incorrectas. La cuenta sigue en estado PENDIENTE.");
+			}
+
+		} catch (ValidationException e) {
+			System.out.println("\n[ERROR DE VALIDACIÓN] " + e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("\n[ERROR DE BASE DE DATOS] " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println("\n[ERROR INESPERADO] " + e.getMessage());
+		}
+	}
 }

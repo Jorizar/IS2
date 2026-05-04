@@ -10,27 +10,26 @@ import aeropuertois2.comun.config.DatabaseConnection;
 
 public class UsuarioDAO {
 
-    private final DatabaseConnection dbConnection;
+	private final DatabaseConnection dbConnection;
 
-    public UsuarioDAO() {
-        this.dbConnection = new DatabaseConnection(DatabaseConfig.load());
-    }
+	public UsuarioDAO() {
+		this.dbConnection = new DatabaseConnection(DatabaseConfig.load());
+	}
 
-    public boolean existeUsuario(int idUsuario) {
-        String sql = "SELECT idUsuario FROM Usuario WHERE idUsuario = ?";
+	public boolean existeUsuario(int idUsuario) {
+		String sql = "SELECT idUsuario FROM Usuario WHERE idUsuario = ?";
 
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = dbConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, idUsuario);
+			ps.setInt(1, idUsuario);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next();
+			}
 
-        } catch (SQLException e) {
-            System.out.println("Error verificar usuario: " + e.getMessage());
-            return false;
-        }
-    }
+		} catch (SQLException e) {
+			System.out.println("Error verificar usuario: " + e.getMessage());
+			return false;
+		}
+	}
 }

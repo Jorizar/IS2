@@ -1,13 +1,9 @@
 package aeropuertois2.incidencia.presentacion;
 
 import aeropuertois2.comun.excepciones.ValidationException;
-import aeropuertois2.incidencia.aplicaciones.IncidenciaService;
 import aeropuertois2.incidencia.aplicaciones.ValidadorIncidencia;
 import aeropuertois2.incidencia.dominio.Incidencia;
 import aeropuertois2.incidencia.dominio.tipoIncidencia;
-import aeropuertois2.incidencia.infrastructura.IncidenciaDAO;
-import aeropuertois2.comun.config.DatabaseConfig;
-import aeropuertois2.comun.config.DatabaseConnection; // Asumiendo que esta es la ruta
 import aeropuertois2.personal.presentacion.ConsolePrinter;
 
 import java.sql.SQLException;
@@ -16,38 +12,33 @@ import java.util.Scanner;
 
 public class IncidenciaMenu {
 
-	private final IncidenciaService incidenciaService;
+	// private final IncidenciaService incidenciaService;
+	private final IncidenciaController incidenciaController;
 
 	public IncidenciaMenu() {
-		DatabaseConfig config = DatabaseConfig.load();
-		DatabaseConnection dataBaseConnection = new DatabaseConnection(config);
-		IncidenciaDAO incidenciaDAO = new IncidenciaDAO(dataBaseConnection);
-		this.incidenciaService = IncidenciaService.getInstance(incidenciaDAO);
+		this.incidenciaController = new IncidenciaController(); // sigue la arquitectura 3 capas y no hay repetecion de
+																// codigo
 	}
 
 	public void iniciar(Scanner scanner) {
-		//ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
-		//ejecutarCrearIncidencia(scanner);
-		
-		
 		boolean salir = false;
-        while (!salir) {
-            ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
-            System.out.println("1. Crear nueva incidencia");
-            System.out.println("2. Mostrar todas las incidencias");
-            System.out.println("3. Volver al menú principal");
-            System.out.print("Seleccione una opción: ");
-            
-            String opcion = scanner.nextLine();
-            
-            switch (opcion) {
-                case "1" -> ejecutarCrearIncidencia(scanner);
-                case "2" -> ejecutarMostrarIncidencias();
-                case "3" -> salir = true;
-                default -> System.out.println("Opción no válida.");
-            }
-        }
-		
+		while (!salir) {
+			ConsolePrinter.printTitulo("Gestion de Incidencias - Nuevo Registro de Incidencia");
+			System.out.println("1. Crear nueva incidencia");
+			System.out.println("2. Mostrar todas las incidencias");
+			System.out.println("3. Volver al menú principal");
+			System.out.print("Seleccione una opción: ");
+
+			String opcion = scanner.nextLine();
+
+			switch (opcion) {
+			case "1" -> ejecutarCrearIncidencia(scanner);
+			case "2" -> ejecutarMostrarIncidencias();
+			case "3" -> salir = true;
+			default -> System.out.println("Opción no válida.");
+			}
+		}
+
 	}
 
 	private void ejecutarCrearIncidencia(Scanner scanner) {
@@ -57,7 +48,7 @@ public class IncidenciaMenu {
 			String descrip = pedirDescrip(scanner);
 			String causa = pedirCausa(scanner);
 
-			incidenciaService.crearIncidencia(id, tipo, descrip, causa);
+			incidenciaController.crearIncidencia(id, tipo, descrip, causa);
 			System.out.println("\n[ÉXITO] La incidencia ha sido volcada en la base de datos.");
 
 		} catch (ValidationException e) {
@@ -132,27 +123,23 @@ public class IncidenciaMenu {
 
 		return op.equals("2") ? tipoIncidencia.PERSONAL : tipoIncidencia.GENERAL;
 	}
-	
-	
-	
-	
+
 	private void ejecutarMostrarIncidencias() {
-        System.out.println("\n--- LISTADO DE INCIDENCIAS ---");
-        try {
-        	List<Incidencia> incidencias = incidenciaService.mostrarIncidencias();
-            
-            if (incidencias.isEmpty()) //en caso de que este vacio (no va a pasar): 
-                System.out.println("No hay ninguna incidencia registrada en la base de datos.");
-            else 
-            {
-                for (Incidencia inc : incidencias) 
-                    System.out.println(inc.toString());
-            }
-            
-            System.out.println("-------------------------------\n");
-            
-        } catch (SQLException e) {
-            System.out.println("ERROR al leer la base de datos: " + e.getMessage());
-        }
-    }
+		System.out.println("\n--- LISTADO DE INCIDENCIAS ---");
+		try {
+			List<Incidencia> incidencias = incidenciaController.mostrarIncidencias();
+
+			if (incidencias.isEmpty()) // en caso de que este vacio (no va a pasar):
+				System.out.println("No hay ninguna incidencia registrada en la base de datos.");
+			else {
+				for (Incidencia inc : incidencias)
+					System.out.println(inc.toString());
+			}
+
+			System.out.println("-------------------------------\n");
+
+		} catch (SQLException e) {
+			System.out.println("ERROR al leer la base de datos: " + e.getMessage());
+		}
+	}
 }

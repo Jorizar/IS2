@@ -32,12 +32,9 @@ public class DatabaseConfig {
 				}
 			}
 
-			Path[] rutasPosibles = new Path[] {
-					Path.of("src/resources/config.properties"),
-					Path.of("src/main/resources/config.properties"),
-					Path.of("target/classes/config.properties"),
-					Path.of("config.properties")
-			};
+			Path[] rutasPosibles = new Path[] { Path.of("src/resources/config.properties"),
+					Path.of("src/main/resources/config.properties"), Path.of("target/classes/config.properties"),
+					Path.of("config.properties") };
 
 			for (Path ruta : rutasPosibles) {
 				if (Files.exists(ruta)) {

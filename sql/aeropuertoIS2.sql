@@ -273,7 +273,6 @@ INSERT INTO viajes (id_viaje, fecha_salida, hora_salida, fecha_llegada, hora_lle
 /*-------------------------------------------------
 	PANELES (Avisos)
 -------------------------------------------------*/
-
 CREATE TABLE avisos  (
 	idAviso CHAR(9) PRIMARY KEY,
 	fecha DATETIME NOT NULL,

@@ -14,58 +14,50 @@ public class InicioController {
 
 	public boolean procesarOpcion(String opcion, Scanner scanner) {
 		switch (opcion) {
-			case "1" -> 
-			{
-				PersonalMenu personalMenu = new PersonalMenu();
-				personalMenu.iniciar(scanner);
-				return true;
-			}
-			case "2" -> 
-			{
-				FinanzasMenu finanzasMenu = new FinanzasMenu();
-				finanzasMenu.iniciar(scanner);
-				return true;
-			}
-			case "3" -> 
-			{
-				IncidenciaMenu incidenciaMenu = new IncidenciaMenu();
-				incidenciaMenu.iniciar(scanner);
-				return true;
-			}
-			case "4" -> {
-				OperacionesMenu operacionesMenu = new OperacionesMenu();
-				operacionesMenu.iniciar(scanner);
-				return true;
-			}
-			case "5" -> 
-			{
-				VistaPaneles panelMenu = new VistaPaneles();
-				panelMenu.iniciar(scanner);
-				return true;
-			}
-			case "6" -> 
-			{
-				  CrearAccesoView view = new CrearAccesoView();
-			      view.mostrarFormulario();
+		case "1" -> {
+			PersonalMenu personalMenu = new PersonalMenu();
+			personalMenu.iniciar(scanner);
+			return true;
+		}
+		case "2" -> {
+			FinanzasMenu finanzasMenu = new FinanzasMenu();
+			finanzasMenu.iniciar(scanner);
+			return true;
+		}
+		case "3" -> {
+			IncidenciaMenu incidenciaMenu = new IncidenciaMenu();
+			incidenciaMenu.iniciar(scanner);
+			return true;
+		}
+		case "4" -> {
+			OperacionesMenu operacionesMenu = new OperacionesMenu();
+			operacionesMenu.iniciar(scanner);
+			return true;
+		}
+		case "5" -> {
+			VistaPaneles panelMenu = new VistaPaneles();
+			panelMenu.iniciar(scanner);
+			return true;
+		}
+		case "6" -> {
+			CrearAccesoView view = new CrearAccesoView();
+			view.mostrarFormulario();
 
-				return true;
-			}
-			case "7" -> 
-			{
-				VueloMenu vueloMenu = new VueloMenu();
-				vueloMenu.iniciar(scanner);
-				return true;
-			}
-			case "8" -> 
-			{
-				System.out.println("Saliendo del sistema...");
-				return false;
-			}
-			default -> 
-			{
-				System.out.println("Opción no válida.");
-				return true;
-			}
+			return true;
+		}
+		case "7" -> {
+			VueloMenu vueloMenu = new VueloMenu();
+			vueloMenu.iniciar(scanner);
+			return true;
+		}
+		case "8" -> {
+			System.out.println("Saliendo del sistema...");
+			return false;
+		}
+		default -> {
+			System.out.println("Opción no válida.");
+			return true;
+		}
 		}
 	}
 }
